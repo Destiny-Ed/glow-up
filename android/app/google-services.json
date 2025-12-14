@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "924791508157",
+    "firebase_url": "https://word-f43ac-default-rtdb.firebaseio.com",
+    "project_id": "word-f43ac",
+    "storage_bucket": "word-f43ac.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:924791508157:android:278b60b338667907577bd4",
+        "android_client_info": {
+          "package_name": "com.example.glow_up"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "924791508157-2hg1n5vp3soeb40khn4ph98rijg8q9o2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZppdx6xLW-IlL-0KqrztT3cye9EaOG90"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "924791508157-2hg1n5vp3soeb40khn4ph98rijg8q9o2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "924791508157-bm5i42v5clh4v0rarulpue6t4og19tum.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.thealphamerc.flutterTwitterClone"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

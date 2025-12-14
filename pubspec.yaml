@@ -1,5 +1,5 @@
 name: glow_up
-description: "A new Flutter project."
+description: "Daily outfit battles with friends. Post, vote, crown the winner."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -34,6 +34,21 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  firebase_core: ^4.2.1  # For backend (auth, database, storage)
+  firebase_auth: ^6.1.2
+  cloud_firestore: ^6.1.0
+  firebase_storage: ^13.0.4
+  google_sign_in: ^7.2.0  # Google sign-in
+  sign_in_with_apple: ^7.0.1  # Apple sign-in
+  contacts_service: ^0.6.3  # Contacts access
+  permission_handler: ^12.0.1  # Permissions
+  camera: ^0.11.3  # Camera for photos
+  image_picker: ^1.0.7  # Fallback image picker
+  share_plus: ^12.0.1  # Sharing reels
+  fluttertoast: ^9.0.0  # Toasts
+  lottie: ^3.3.2  # Animations (confetti, crown)
+  google_fonts: ^6.1.0  # Clean typography
+  intl: ^0.20.2  # Date handling
 
 dev_dependencies:
   flutter_test:

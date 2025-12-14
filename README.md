@@ -1,6 +1,6 @@
 # glow_up
 
-A new Flutter project.
+Daily outfit battles with friends. Post, vote, crown the winner..
 
 ## Getting Started
 
