@@ -96,21 +96,35 @@ class BattleActiveScreen extends StatelessWidget {
               style: TextStyle(color: Theme.of(context).primaryColor),
             ),
             const SizedBox(height: 8),
+
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 spacing: 8,
-                children: participants
-                    .map(
-                      (p) => Chip(
-                        label: Text(
-                          p,
-                          style: Theme.of(context).textTheme.titleSmall,
+                children: [
+                  Chip(
+                    avatar: Icon(
+                      Icons.add,
+                      color: Theme.of(context).textTheme.titleSmall!.color,
+                    ),
+                    label: Text(
+                      "Post",
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                    backgroundColor: Theme.of(context).primaryColor,
+                  ),
+                  ...participants
+                      .map(
+                        (p) => Chip(
+                          label: Text(
+                            p,
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                          backgroundColor: Theme.of(context).cardColor,
                         ),
-                        backgroundColor: Theme.of(context).cardColor,
-                      ),
-                    )
-                    .toList(),
+                      )
+                      .toList(),
+                ],
               ),
             ),
           ],

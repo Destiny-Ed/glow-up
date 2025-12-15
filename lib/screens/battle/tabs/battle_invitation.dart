@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:glow_up/screens/camera/camera_screen.dart';
 
 class BattleInvitationsScreen extends StatelessWidget {
   const BattleInvitationsScreen({super.key});
@@ -16,7 +17,10 @@ class BattleInvitationsScreen extends StatelessWidget {
           theme: 'GYM FIT',
           message: 'Let\'s see who slays the gym look better 💪',
           onAccept: () {
-            // Navigator.push(context, MaterialPageRoute(builder: (_) => const BattleViewScreen(isActive: false)));
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const CameraScreen()),
+            );
           },
         ),
         _buildInvitationCard(

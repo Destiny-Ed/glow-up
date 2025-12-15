@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:glow_up/providers/glow_up.dart';
+import 'package:glow_up/screens/camera/camera_screen.dart';
+import 'package:glow_up/widgets/custom_button.dart';
 import 'package:glow_up/widgets/post_item_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart'; // For fire animation on tap
@@ -63,6 +65,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       _buildTab('Friends', _friendsMode),
                       const SizedBox(width: 16),
                       _buildTab('Global', !_friendsMode),
+                      Spacer(),
+                      SizedBox(
+                        width: 100,
+                        height: 50,
+                        child: CustomButton(
+                          text: "Post",
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const CameraScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     ],
                   ),
                 ),
