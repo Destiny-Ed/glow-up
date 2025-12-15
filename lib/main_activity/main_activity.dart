@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:glow_up/battle/battle_main_screen.dart';
 import 'package:glow_up/screens/friends/friends.dart';
 import 'package:glow_up/screens/home_screen.dart';
 import 'package:glow_up/screens/profile_screen.dart';
@@ -15,12 +16,7 @@ class _MainActivityScreenState extends State<MainActivityScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(), // Index 0
-    const Center(
-      child: Text(
-        'Battle Screen\nComing Soon',
-        style: TextStyle(color: Colors.white, fontSize: 20),
-      ),
-    ), // Placeholder
+    const BattleMainScreen(), // index 1
     const FriendsRequestScreen(), // Index 2
     ProfileScreen(), // Index 3
   ];
