@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:glow_up/battle/active_battle.dart';
-import 'package:glow_up/battle/battle_finished.dart';
-import 'package:glow_up/battle/battle_invitation.dart';
-import 'package:glow_up/battle/create_battle.dart';
+import 'package:glow_up/screens/battle/tabs/active_battle.dart';
+import 'package:glow_up/screens/battle/tabs/battle_finished.dart';
+import 'package:glow_up/screens/battle/tabs/battle_invitation.dart';
+import 'package:glow_up/screens/battle/create_battle.dart';
 
 class BattleMainScreen extends StatefulWidget {
   const BattleMainScreen({super.key});
@@ -11,7 +11,8 @@ class BattleMainScreen extends StatefulWidget {
   State<BattleMainScreen> createState() => _BattleMainScreenState();
 }
 
-class _BattleMainScreenState extends State<BattleMainScreen> with SingleTickerProviderStateMixin {
+class _BattleMainScreenState extends State<BattleMainScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -29,14 +30,18 @@ class _BattleMainScreenState extends State<BattleMainScreen> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const Text('Battles', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        automaticallyImplyLeading: false,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        title: const Text(
+          'Battles',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: Colors.green,
-          labelColor: Colors.green,
+          indicatorColor: Theme.of(context).primaryColor,
+          labelColor: Theme.of(context).primaryColor,
           unselectedLabelColor: Colors.white70,
           tabs: const [
             Tab(text: 'Active'),
@@ -46,8 +51,11 @@ class _BattleMainScreenState extends State<BattleMainScreen> with SingleTickerPr
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.green,
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CreateBattleScreen())),
+        backgroundColor: Theme.of(context).primaryColor,
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const CreateBattleScreen()),
+        ),
         child: const Icon(Icons.add, size: 32),
       ),
       body: TabBarView(

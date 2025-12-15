@@ -1,4 +1,5 @@
 import 'dart:developer' as developer;
+import 'package:avatar_stack/animated_avatar_stack.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -99,13 +100,14 @@ class _ContactSyncScreenState extends State<ContactSyncScreen> {
                 ),
               ),
               const Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: List.generate(
-                  3,
-                  (index) => const CircleAvatar(radius: 30),
-                ),
+              AnimatedAvatarStack(
+                height: 50,
+                avatars: [
+                  for (var n = 0; n < 15; n++)
+                    NetworkImage('https://i.pravatar.cc/150?img=$n'),
+                ],
               ),
+
               20.height(),
               Container(
                 padding: const EdgeInsets.all(12),
@@ -138,12 +140,8 @@ class _ContactSyncScreenState extends State<ContactSyncScreen> {
                 text: _isLoading ? "Syncing..." : "Sync Contacts".cap,
                 icon: const Icon(Icons.contact_mail, color: Colors.white),
                 onTap: () {
-                  // if (_isLoading == true) return;
-                  // _syncContacts();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => CameraScreen()),
-                  );
+                  if (_isLoading == true) return;
+                  _syncContacts();
                 },
               ),
               20.height(),
@@ -161,11 +159,18 @@ class _ContactSyncScreenState extends State<ContactSyncScreen> {
                       ),
                       TextSpan(
                         text: "Skip for now".cap,
-                        style: Theme.of(context).textTheme.titleMedium!
-                            .copyWith(decoration: TextDecoration.underline),
-
+                        style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                          decoration: TextDecoration.underline,
+                        ),
                         recognizer: TapGestureRecognizer()
-                          ..onTap = () => Navigator.pop(context), // Or go next
+                          ..onTap = () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const CameraScreen(),
+                              ),
+                            );
+                          }, // Or go next
                       ),
                     ],
                     style: Theme.of(context).textTheme.bodyMedium,

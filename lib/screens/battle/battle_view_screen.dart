@@ -20,33 +20,32 @@ class BattleViewScreen extends StatelessWidget {
   final List<Map<String, dynamic>> entries = const [
     {
       'username': 'You',
-      'photoUrl': 'https://assets.vogue.com/photos/616062ff816ea2de6ec85809/master/w_2560%2Cc_limit/00_story.jpg',
+      'photoUrl':
+          'https://assets.vogue.com/photos/616062ff816ea2de6ec85809/master/w_2560%2Cc_limit/00_story.jpg',
       'votes': 58,
       'hasPosted': true,
     },
     {
       'username': '@elena_style',
-      'photoUrl': 'https://media.istockphoto.com/id/1489381517/photo/portrait-of-gorgeous-brunette-woman-standing-city-street-fashion-model-wears-black-leather.jpg?s=612x612&w=0&k=20&c=Ji-vXNMVdjtgiO0ZH1B5d5BbIhmpwngkhx1u4QaiG1g=',
+      'photoUrl':
+          'https://media.istockphoto.com/id/1489381517/photo/portrait-of-gorgeous-brunette-woman-standing-city-street-fashion-model-wears-black-leather.jpg?s=612x612&w=0&k=20&c=Ji-vXNMVdjtgiO0ZH1B5d5BbIhmpwngkhx1u4QaiG1g=',
       'votes': 52,
       'hasPosted': true,
     },
     {
       'username': '@mike_drips',
-      'photoUrl': 'https://gentwith.com/wp-content/uploads/2021/02/10-Men%E2%80%99s-Style-Tips-To-Look-Powerful.jpg',
+      'photoUrl':
+          'https://gentwith.com/wp-content/uploads/2021/02/10-Men%E2%80%99s-Style-Tips-To-Look-Powerful.jpg',
       'votes': 41,
       'hasPosted': true,
     },
-    {
-      'username': '@j_smith99',
-      'photoUrl': '',
-      'votes': 0,
-      'hasPosted': false,
-    },
+    {'username': '@j_smith99', 'photoUrl': '', 'votes': 0, 'hasPosted': false},
   ];
 
   @override
   Widget build(BuildContext context) {
-    final sortedEntries = List.from(entries)..sort((a, b) => b['votes'].compareTo(a['votes']));
+    final sortedEntries = List.from(entries)
+      ..sort((a, b) => b['votes'].compareTo(a['votes']));
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -58,9 +57,7 @@ class BattleViewScreen extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         centerTitle: true,
-        actions: const [
-          IconButton(icon: Icon(Icons.share), onPressed: null),
-        ],
+        actions: const [IconButton(icon: Icon(Icons.share), onPressed: null)],
       ),
       body: Stack(
         children: [
@@ -78,7 +75,10 @@ class BattleViewScreen extends StatelessWidget {
                     children: [
                       Icon(Icons.timer, color: Colors.white70, size: 20),
                       SizedBox(width: 8),
-                      Text('18 hours left', style: TextStyle(color: Colors.white, fontSize: 16)),
+                      Text(
+                        '18 hours left',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
                     ],
                   ),
                 ),
@@ -99,6 +99,7 @@ class BattleViewScreen extends StatelessWidget {
                     final isWinner = !isActive && index == 0;
 
                     return _buildEntryCard(
+                      context,
                       username: entry['username'],
                       photoUrl: entry['photoUrl'],
                       votes: entry['votes'],
@@ -120,32 +121,55 @@ class BattleViewScreen extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Lottie.asset('assets/lottie/confetti.json', width: 300, repeat: false),
+                    Lottie.asset(
+                      'assets/lottie/confetti.json',
+                      width: 300,
+                      repeat: false,
+                    ),
                     const SizedBox(height: 20),
-                    Icon(Icons.emoji_events, color: Colors.green, size: 80),
+                    Icon(
+                      Icons.emoji_events,
+                      color: Theme.of(context).primaryColor,
+                      size: 80,
+                    ),
                     const SizedBox(height: 20),
                     Text(
                       didUserWin ? 'YOU WON!' : '@$winnerUsername WON!',
-                      style: const TextStyle(color: Colors.green, fontSize: 36, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 12),
-                    const Text('This battle is complete', style: TextStyle(color: Colors.white70, fontSize: 18)),
+                    const Text(
+                      'This battle is complete',
+                      style: TextStyle(color: Colors.white70, fontSize: 18),
+                    ),
                     const SizedBox(height: 40),
                     ElevatedButton(
                       onPressed: () {
                         // Share reel
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                        backgroundColor: Theme.of(context).primaryColor,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 40,
+                          vertical: 18,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
                       ),
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(Icons.share),
                           SizedBox(width: 12),
-                          Text('Share Victory Reel', style: TextStyle(fontSize: 18)),
+                          Text(
+                            'Share Victory Reel',
+                            style: TextStyle(fontSize: 18),
+                          ),
                         ],
                       ),
                     ),
@@ -167,9 +191,18 @@ class BattleViewScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildVoteButton(label: 'Solid', icon: Icons.thumb_up),
-                  _buildVoteButton(label: 'FIRE', icon: Icons.whatshot, isFire: true),
-                  _buildVoteButton(label: 'Skip', icon: Icons.close),
+                  _buildVoteButton(
+                    context,
+                    label: 'Solid',
+                    icon: Icons.thumb_up,
+                  ),
+                  _buildVoteButton(
+                    context,
+                    label: 'FIRE',
+                    icon: Icons.whatshot,
+                    isFire: true,
+                  ),
+                  _buildVoteButton(context, label: 'Skip', icon: Icons.close),
                 ],
               ),
             )
@@ -177,7 +210,8 @@ class BattleViewScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEntryCard({
+  Widget _buildEntryCard(
+    BuildContext context, {
     required String username,
     required String photoUrl,
     required int votes,
@@ -191,7 +225,9 @@ class BattleViewScreen extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: isWinner ? Colors.green : Colors.transparent,
+              color: isWinner
+                  ? Theme.of(context).primaryColor
+                  : Colors.transparent,
               width: isWinner ? 4 : 0,
             ),
           ),
@@ -203,7 +239,8 @@ class BattleViewScreen extends StatelessWidget {
                     fit: BoxFit.cover,
                     width: double.infinity,
                     height: double.infinity,
-                    placeholder: (context, url) => Container(color: Colors.white10),
+                    placeholder: (context, url) =>
+                        Container(color: Colors.white10),
                   )
                 : Container(
                     color: Colors.white10,
@@ -212,7 +249,10 @@ class BattleViewScreen extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(Icons.pending, color: Colors.white54, size: 40),
-                          Text('Not posted yet', style: TextStyle(color: Colors.white54)),
+                          Text(
+                            'Not posted yet',
+                            style: TextStyle(color: Colors.white54),
+                          ),
                         ],
                       ),
                     ),
@@ -233,7 +273,9 @@ class BattleViewScreen extends StatelessWidget {
             child: Text(
               username,
               style: TextStyle(
-                color: isUserEntry ? Colors.green : Colors.white,
+                color: isUserEntry
+                    ? Theme.of(context).primaryColor
+                    : Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -248,13 +290,21 @@ class BattleViewScreen extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.green,
+                color: Theme.of(context).primaryColor,
                 borderRadius: BorderRadius.circular(20),
-                boxShadow: [BoxShadow(color: Colors.green.withOpacity(0.5), blurRadius: 10)],
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context).primaryColor.withOpacity(0.5),
+                    blurRadius: 10,
+                  ),
+                ],
               ),
               child: Text(
                 '$votes 🔥',
-                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -265,13 +315,22 @@ class BattleViewScreen extends StatelessWidget {
             top: -10,
             left: 0,
             right: 0,
-            child: Icon(Icons.emoji_events, color: Colors.green, size: 60),
+            child: Icon(
+              Icons.emoji_events,
+              color: Theme.of(context).primaryColor,
+              size: 60,
+            ),
           ),
       ],
     );
   }
 
-  Widget _buildVoteButton({required String label, required IconData icon, bool isFire = false}) {
+  Widget _buildVoteButton(
+    BuildContext context, {
+    required String label,
+    required IconData icon,
+    bool isFire = false,
+  }) {
     return GestureDetector(
       onTap: () {
         // Handle vote
@@ -283,8 +342,17 @@ class BattleViewScreen extends StatelessWidget {
             padding: const EdgeInsets.all(22),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isFire ? Colors.green : Colors.white.withOpacity(0.1),
-              boxShadow: isFire ? [BoxShadow(color: Colors.green.withOpacity(0.6), blurRadius: 20)] : [],
+              color: isFire
+                  ? Theme.of(context).primaryColor
+                  : Colors.white.withOpacity(0.1),
+              boxShadow: isFire
+                  ? [
+                      BoxShadow(
+                        color: Theme.of(context).primaryColor.withOpacity(0.6),
+                        blurRadius: 20,
+                      ),
+                    ]
+                  : [],
             ),
             child: Icon(icon, color: Colors.white, size: 36),
           ),
@@ -292,7 +360,7 @@ class BattleViewScreen extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              color: isFire ? Colors.green : Colors.white,
+              color: isFire ? Theme.of(context).primaryColor : Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 16,
             ),

@@ -1,4 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:glow_up/core/extensions.dart';
+import 'package:glow_up/widgets/custom_button.dart';
 import 'package:table_calendar/table_calendar.dart'; // pubspec: table_calendar: ^3.0.9
 
 class ProfileScreen extends StatelessWidget {
@@ -20,19 +24,25 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.black,
         elevation: 0,
-        actions: const [
+        actions: [
           IconButton(
-            icon: Icon(Icons.settings, color: Colors.white),
+            icon: Icon(
+              Icons.settings,
+              color: Theme.of(context).textTheme.titleMedium!.color,
+            ),
             onPressed: null,
           ),
           IconButton(
-            icon: Icon(Icons.share, color: Colors.white),
+            icon: Icon(
+              Icons.share,
+              color: Theme.of(context).textTheme.titleMedium!.color,
+            ),
             onPressed: null,
           ),
-          IconButton(
-            icon: Icon(Icons.edit, color: Colors.white),
-            onPressed: null,
-          ),
+          // IconButton(
+          //   icon: Icon(Icons.edit, color: Theme.of(context).textTheme.titleMedium!.color),
+          //   onPressed: null,
+          // ),
         ],
       ),
       body: ListView(
@@ -45,26 +55,25 @@ class ProfileScreen extends StatelessWidget {
                 alignment: Alignment.bottomRight,
                 children: [
                   CircleAvatar(
-                    radius: 60,
-                    backgroundColor: Colors.green,
-                    child: CircleAvatar(
-                      radius: 58,
-                      backgroundImage: NetworkImage(
+                    radius: 50,
+                    backgroundColor: Theme.of(context).primaryColor,
+                    child: const CircleAvatar(
+                      radius: 48,
+                      backgroundImage: CachedNetworkImageProvider(
                         'https://via.placeholder.com/150',
-                      ), // Replace with user avatar
+                      ),
                     ),
                   ),
-                  const CircleAvatar(radius: 12, backgroundColor: Colors.green),
+                  CircleAvatar(
+                    radius: 12,
+                    backgroundColor: Theme.of(context).primaryColor,
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 '@StyleQueen',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
               const Text(
                 'Fashion enthusiast & daily battler',
@@ -74,30 +83,32 @@ class ProfileScreen extends StatelessWidget {
 
               // Streak Card
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 32),
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Column(
                   children: [
-                    Icon(Icons.whatshot, color: Colors.green, size: 48),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '12 Days',
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontSize: 48,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Icon(
+                      Icons.whatshot,
+                      color: Theme.of(context).primaryColor,
+                      size: 48,
                     ),
-                    const Text(
+                    const SizedBox(height: 8),
+                    Text(
+                      '12 Days',
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 32,
+                          ),
+                    ),
+                    Text(
                       'ON FIRE',
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(color: Theme.of(context).primaryColor),
                     ),
                   ],
                 ),
@@ -108,9 +119,9 @@ class ProfileScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildStatCard('45', 'WINS'),
-                  _buildStatCard('102', 'BATTLES'),
-                  _buildStatCard('12k', 'VOTES'),
+                  _buildStatCard(context, '45', 'WINS'),
+                  _buildStatCard(context, '102', 'BATTLES'),
+                  _buildStatCard(context, '12k', 'VOTES'),
                 ],
               ),
               const SizedBox(height: 40),
@@ -118,15 +129,15 @@ class ProfileScreen extends StatelessWidget {
               // Trophy Room Calendar
               Row(
                 children: [
-                  Icon(Icons.emoji_events, color: Colors.green, size: 28),
+                  Icon(
+                    Icons.emoji_events,
+                    color: Theme.of(context).primaryColor,
+                    size: 28,
+                  ),
                   const SizedBox(width: 8),
-                  const Text(
+                  Text(
                     'Trophy Room',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const Spacer(),
                   DropdownButton<String>(
@@ -170,7 +181,10 @@ class ProfileScreen extends StatelessWidget {
                   todayDecoration: BoxDecoration(
                     color: Colors.transparent,
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.green, width: 2),
+                    border: Border.all(
+                      color: Theme.of(context).primaryColor,
+                      width: 2,
+                    ),
                   ),
                   todayTextStyle: const TextStyle(color: Colors.white),
                 ),
@@ -191,16 +205,19 @@ class ProfileScreen extends StatelessWidget {
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          CircleAvatar(
+                          const CircleAvatar(
                             radius: 20,
-                            backgroundImage: NetworkImage(
+                            backgroundImage: CachedNetworkImageProvider(
                               'https://via.placeholder.com/80',
                             ), // Replace with actual win photo
                           ),
                           Container(
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              border: Border.all(color: Colors.green, width: 3),
+                              border: Border.all(
+                                color: Theme.of(context).primaryColor,
+                                width: 3,
+                              ),
                             ),
                           ),
                         ],
@@ -213,45 +230,21 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(height: 50),
 
               // New Battle Button
-              ElevatedButton(
-                onPressed: () {
-                  // Navigate to camera or battle creation
+              CustomButton(
+                text: "new battle",
+                onTap: () {
+                  //Change tab to battle
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 50,
-                    vertical: 20,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.add, size: 28),
-                    SizedBox(width: 12),
-                    Text(
-                      'New Battle',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
               ),
 
-              const SizedBox(height: 40),
+              20.height(),
 
               // Gallery View Below (All Past Posts)
-              const Text(
-                'Gallery',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Gallery',
+                  style: Theme.of(context).textTheme.headlineLarge,
                 ),
               ),
               const SizedBox(height: 16),
@@ -303,7 +296,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String value, String label) {
+  Widget _buildStatCard(BuildContext context, String value, String label) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 32),
       decoration: BoxDecoration(
@@ -314,15 +307,15 @@ class ProfileScreen extends StatelessWidget {
         children: [
           Text(
             value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontSize: 28),
           ),
           Text(
             label,
-            style: const TextStyle(color: Colors.white70, fontSize: 14),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(color: Colors.white70),
           ),
         ],
       ),

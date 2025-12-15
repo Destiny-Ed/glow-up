@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:glow_up/battle/battle_main_screen.dart';
+import 'package:glow_up/screens/battle/battle_main_screen.dart';
 import 'package:glow_up/screens/friends/friends.dart';
 import 'package:glow_up/screens/home_screen.dart';
-import 'package:glow_up/screens/profile_screen.dart';
+import 'package:glow_up/screens/profile/profile.dart';
 
 class MainActivityScreen extends StatefulWidget {
   const MainActivityScreen({super.key});
@@ -33,7 +33,7 @@ class _MainActivityScreenState extends State<MainActivityScreen> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: const Color(0xFF0A0E0A),
-        selectedItemColor: Colors.green,
+        selectedItemColor: Theme.of(context).primaryColor,
         unselectedItemColor: Colors.grey,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,

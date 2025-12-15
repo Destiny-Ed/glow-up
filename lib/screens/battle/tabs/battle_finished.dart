@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:glow_up/battle/battle_view_screen.dart';
+import 'package:glow_up/screens/battle/battle_view_screen.dart';
 
 class BattleFinishedScreen extends StatelessWidget {
   const BattleFinishedScreen({super.key});
@@ -53,7 +53,7 @@ class BattleFinishedScreen extends StatelessWidget {
           children: [
             Icon(
               won ? Icons.emoji_events : Icons.whatshot,
-              color: won ? Colors.green : Colors.white70,
+              color: won ? Theme.of(context).primaryColor : Colors.white70,
               size: 32,
             ),
             const SizedBox(width: 16),
@@ -69,7 +69,11 @@ class BattleFinishedScreen extends StatelessWidget {
                 ),
                 Text(
                   result,
-                  style: TextStyle(color: won ? Colors.green : Colors.white70),
+                  style: TextStyle(
+                    color: won
+                        ? Theme.of(context).primaryColor
+                        : Colors.white70,
+                  ),
                 ),
               ],
             ),

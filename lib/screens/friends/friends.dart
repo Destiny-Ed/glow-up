@@ -49,9 +49,9 @@ class FriendsRequestScreen extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () {},
-                child: const Text(
+                child: Text(
                   'Manage',
-                  style: TextStyle(color: Colors.green),
+                  style: TextStyle(color: Theme.of(context).primaryColor),
                 ),
               ),
             ],
@@ -60,6 +60,7 @@ class FriendsRequestScreen extends StatelessWidget {
 
           // Pending Request Cards
           _buildPendingRequest(
+            context,
             avatar: 'https://via.placeholder.com/60', // Replace with real
             name: 'Elena Rodriguez',
             username: '@elena_style',
@@ -68,6 +69,7 @@ class FriendsRequestScreen extends StatelessWidget {
             hasBadge: true,
           ),
           _buildPendingRequest(
+            context,
             avatar: 'https://via.placeholder.com/60',
             name: 'Jordan Smith',
             username: '@j_smith99',
@@ -75,6 +77,7 @@ class FriendsRequestScreen extends StatelessWidget {
             time: '5h',
           ),
           _buildPendingRequest(
+            context,
             avatar: 'https://via.placeholder.com/60',
             name: 'Marcus Chen',
             username: '@mchen_designs',
@@ -93,11 +96,13 @@ class FriendsRequestScreen extends StatelessWidget {
           const SizedBox(height: 12),
 
           _buildSuggestion(
+            context,
             name: 'Sarah K.',
             info: 'From your contacts',
             avatar: 'https://via.placeholder.com/60',
           ),
           _buildSuggestion(
+            context,
             name: 'David R.',
             info: 'Similar style',
             avatar: 'https://via.placeholder.com/60',
@@ -117,11 +122,13 @@ class FriendsRequestScreen extends StatelessWidget {
           const SizedBox(height: 16),
 
           _buildActionTile(
+            context,
             icon: Icons.search,
             title: 'Find by username...',
             subtitle: '',
           ),
           _buildActionTile(
+            context,
             icon: Icons.contacts,
             title: 'Invite from Contacts',
             subtitle: 'Find people you already know',
@@ -132,7 +139,8 @@ class FriendsRequestScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPendingRequest({
+  Widget _buildPendingRequest(
+    BuildContext context, {
     required String avatar,
     required String name,
     required String username,
@@ -171,7 +179,7 @@ class FriendsRequestScreen extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor: Theme.of(context).primaryColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -203,7 +211,7 @@ class FriendsRequestScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSuggestion({
+  Widget _buildSuggestion(BuildContext context,{
     required String name,
     required String info,
     required String avatar,
@@ -238,7 +246,11 @@ class FriendsRequestScreen extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.add_circle, color: Colors.green, size: 32),
+            icon:   Icon(
+              Icons.add_circle,
+              color: Theme.of(context).primaryColor,
+              size: 32,
+            ),
             onPressed: () {},
           ),
         ],
@@ -246,7 +258,7 @@ class FriendsRequestScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActionTile({
+  Widget _buildActionTile(BuildContext context,{
     required IconData icon,
     required String title,
     required String subtitle,
@@ -255,8 +267,8 @@ class FriendsRequestScreen extends StatelessWidget {
     return ListTile(
       leading: CircleAvatar(
         radius: 24,
-        backgroundColor: Colors.green.withOpacity(0.2),
-        child: Icon(icon, color: Colors.green),
+        backgroundColor: Theme.of(context).primaryColor.withOpacity(0.2),
+        child: Icon(icon, color: Theme.of(context).primaryColor),
       ),
       title: Text(
         title,

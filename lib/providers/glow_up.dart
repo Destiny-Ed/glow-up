@@ -12,7 +12,9 @@ class GlowUpProvider extends ChangeNotifier {
 
   Future<void> fetchTodayPosts({bool friendsOnly = true}) async {
     _isLoading = true;
-    notifyListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
 
     final today = DateTime.now().toIso8601String().split('T')[0];
     Query query = FirebaseFirestore.instance

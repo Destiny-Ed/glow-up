@@ -129,7 +129,7 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
                       vertical: 10,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.green,
+                      color: Theme.of(context).primaryColor,
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Row(
@@ -156,10 +156,12 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
                         onSelected: (_) =>
                             setState(() => _customThemeController.text = theme),
                         backgroundColor: Colors.white10,
-                        selectedColor: Colors.green.withOpacity(0.3),
+                        selectedColor: Theme.of(
+                          context,
+                        ).primaryColor.withOpacity(0.3),
                         labelStyle: TextStyle(
                           color: _customThemeController.text == theme
-                              ? Colors.green
+                              ? Theme.of(context).primaryColor
                               : Colors.white,
                         ),
                       ),
@@ -368,13 +370,17 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
                       }
                     : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: canSend ? Colors.green : Colors.grey[800],
+                  backgroundColor: canSend
+                      ? Theme.of(context).primaryColor
+                      : Colors.grey[800],
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                   elevation: canSend ? 10 : 0,
-                  shadowColor: canSend ? Colors.green.withOpacity(0.5) : null,
+                  shadowColor: canSend
+                      ? Theme.of(context).primaryColor.withOpacity(0.5)
+                      : null,
                 ),
                 child: Text(
                   'Send Challenge >',
@@ -398,7 +404,7 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
-          color: selected ? Colors.green : Colors.white10,
+          color: selected ? Theme.of(context).primaryColor : Colors.white10,
           borderRadius: BorderRadius.circular(30),
         ),
         child: Text(
@@ -448,7 +454,10 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
                     style: const TextStyle(color: Colors.white70),
                   ),
                   trailing: isSelected
-                      ? const Icon(Icons.check, color: Colors.green)
+                      ?   Icon(
+                          Icons.check,
+                          color: Theme.of(context).primaryColor,
+                        )
                       : null,
                   onTap: () {
                     _addOpponent(friend);

@@ -14,10 +14,9 @@ class CameraScreen extends StatefulWidget {
 }
 
 class _CameraScreenState extends State<CameraScreen> {
-  late CameraController _controller;
-  late Future<void> _initializeControllerFuture;
+  CameraController? _controller;
   bool _isFlashOn = false;
-  XFile? _pickedImage; // For gallery pick preview
+  XFile? _pickedImage;
 
   @override
   void initState() {
@@ -33,13 +32,12 @@ class _CameraScreenState extends State<CameraScreen> {
       orElse: () => cameras.first,
     );
     _controller = CameraController(frontCamera, ResolutionPreset.high);
-    _initializeControllerFuture = _controller.initialize();
     if (mounted) setState(() {});
   }
 
   Future<void> _toggleFlash() async {
     setState(() => _isFlashOn = !_isFlashOn);
-    await _controller.setFlashMode(
+    await _controller?.setFlashMode(
       _isFlashOn ? FlashMode.torch : FlashMode.off,
     );
   }
@@ -47,28 +45,28 @@ class _CameraScreenState extends State<CameraScreen> {
   // Switch between Front and Rear Camera
   Future<void> _switchCamera() async {
     final cameras = await availableCameras();
-    if (cameras.length < 2) return; // Only one camera available
+    if (cameras.length < 2) return;
 
-    final currentLensDirection = _controller.description.lensDirection;
+    final currentLensDirection = _controller?.description.lensDirection;
     final newCamera = cameras.firstWhere(
       (camera) => camera.lensDirection != currentLensDirection,
       orElse: () => cameras.first,
     );
 
     // Dispose old controller
-    await _controller.dispose();
+    await _controller?.dispose();
 
     // Create new controller with opposite camera
     _controller = CameraController(newCamera, ResolutionPreset.high);
 
     // Re-initialize
-    await _controller.initialize();
+    await _controller?.initialize();
 
     // Optional: Preserve flash state if possible
     if (_isFlashOn && newCamera.lensDirection == CameraLensDirection.back) {
-      await _controller.setFlashMode(FlashMode.torch);
+      await _controller?.setFlashMode(FlashMode.torch);
     } else {
-      await _controller.setFlashMode(FlashMode.off);
+      await _controller?.setFlashMode(FlashMode.off);
       setState(() => _isFlashOn = false);
     }
 
@@ -89,9 +87,10 @@ class _CameraScreenState extends State<CameraScreen> {
       if (_pickedImage != null) {
         imageFile = File(_pickedImage!.path);
       } else {
-        await _initializeControllerFuture;
-        final image = await _controller.takePicture();
-        imageFile = File(image.path);
+        await _controller?.initialize();
+        final image = await _controller?.takePicture();
+        imageFile = File(image?.path ?? "");
+        setState(() {});
       }
 
       // final uid = AuthService().currentUser?.uid ?? '';
@@ -123,7 +122,7 @@ class _CameraScreenState extends State<CameraScreen> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
@@ -140,31 +139,16 @@ class _CameraScreenState extends State<CameraScreen> {
             )
           else
             FutureBuilder<void>(
-              future: _initializeControllerFuture,
+              future: _controller?.initialize(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
-                  return Positioned.fill(child: CameraPreview(_controller));
+                  return Positioned.fill(child: CameraPreview(_controller!));
                 }
                 return const Center(
                   child: CircularProgressIndicator(color: Colors.white),
                 );
               },
             ),
-
-          // Olive-Green Gradient Overlay
-          Container(
-            decoration: const BoxDecoration(
-              // gradient: LinearGradient(
-              //   begin: Alignment.topCenter,
-              //   end: Alignment.bottomCenter,
-              //   colors: [
-              //     Color(0x99009600),
-              //     Color(0xCC556B2F),
-              //     Color(0x99009600),
-              //   ],
-              // ),
-            ),
-          ),
 
           // Pose Guide Silhouette (Dashed)
           Center(
@@ -246,9 +230,9 @@ class _CameraScreenState extends State<CameraScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildTab('VIDEO', false),
+                      // _buildTab('VIDEO', false),
                       _buildTab('PHOTO', true),
-                      _buildTab('BATTLE', false),
+                      // _buildTab('BATTLE', false),
                     ],
                   ),
                   const SizedBox(height: 30),
@@ -281,7 +265,7 @@ class _CameraScreenState extends State<CameraScreen> {
           Text(
             text,
             style: TextStyle(
-              color: active ? Colors.green : Colors.white70,
+              color: active ? Theme.of(context).primaryColor : Colors.white70,
               fontSize: 16,
             ),
           ),
@@ -290,7 +274,7 @@ class _CameraScreenState extends State<CameraScreen> {
               margin: const EdgeInsets.only(top: 6),
               height: 3,
               width: 40,
-              color: Colors.green,
+              color: Theme.of(context).primaryColor,
             ),
         ],
       ),
@@ -302,7 +286,7 @@ class _CameraScreenState extends State<CameraScreen> {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           shape: BoxShape.circle,
           color: Colors.black54,
         ),

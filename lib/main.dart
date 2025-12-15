@@ -42,8 +42,10 @@
 //   }
 // }
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:glow_up/core/constants.dart';
+import 'package:glow_up/firebase_options.dart';
 import 'package:glow_up/providers/auth.dart';
 import 'package:glow_up/providers/glow_up.dart';
 import 'package:glow_up/providers/settings.dart';
@@ -51,7 +53,9 @@ import 'package:glow_up/screens/authentication/splash.dart';
 import 'package:provider/provider.dart';
 import 'core/theme.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const GlowUpApp());
 }
 
