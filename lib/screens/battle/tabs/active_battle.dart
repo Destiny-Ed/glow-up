@@ -2,6 +2,7 @@ import 'package:avatar_stack/animated_avatar_stack.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:glow_up/screens/battle/battle_view_screen.dart';
+import 'package:glow_up/screens/camera/camera_screen.dart';
 
 class BattleActiveScreen extends StatelessWidget {
   const BattleActiveScreen({super.key});
@@ -102,16 +103,27 @@ class BattleActiveScreen extends StatelessWidget {
               child: Row(
                 spacing: 8,
                 children: [
-                  Chip(
-                    avatar: Icon(
-                      Icons.add,
-                      color: Theme.of(context).textTheme.titleSmall!.color,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CameraScreen(),
+                        ),
+                      );
+                    },
+                    child: Chip(
+                      avatar: Icon(
+                        Icons.add,
+                        color: Theme.of(context).textTheme.titleSmall!.color,
+                      ),
+                      label: Text(
+                        "Post",
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+
+                      backgroundColor: Theme.of(context).primaryColor,
                     ),
-                    label: Text(
-                      "Post",
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                    backgroundColor: Theme.of(context).primaryColor,
                   ),
                   ...participants
                       .map(
