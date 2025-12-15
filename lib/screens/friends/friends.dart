@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:glow_up/core/extensions.dart';
 
 class FriendsRequestScreen extends StatelessWidget {
   const FriendsRequestScreen({super.key});
@@ -6,38 +8,19 @@ class FriendsRequestScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
+        automaticallyImplyLeading: false,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: const Text(
-          'Friend Requests',
+          'Friend',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        actions: const [
-          IconButton(icon: Icon(Icons.settings), onPressed: null),
-        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           // Search Bar
-          TextField(
-            decoration: InputDecoration(
-              hintText: 'Search requests',
-              prefixIcon: const Icon(Icons.search, color: Colors.white54),
-              filled: true,
-              fillColor: Colors.white10,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-                borderSide: BorderSide.none,
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
 
           // Pending Requests Header
           Row(
@@ -56,55 +39,49 @@ class FriendsRequestScreen extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
 
           // Pending Request Cards
-          _buildPendingRequest(
-            context,
-            avatar: 'https://via.placeholder.com/60', // Replace with real
-            name: 'Elena Rodriguez',
-            username: '@elena_style',
-            info: '12 mutual battles',
-            time: '2h',
-            hasBadge: true,
-          ),
-          _buildPendingRequest(
-            context,
-            avatar: 'https://via.placeholder.com/60',
-            name: 'Jordan Smith',
-            username: '@j_smith99',
-            info: 'Top 5% Stylist',
-            time: '5h',
-          ),
-          _buildPendingRequest(
-            context,
-            avatar: 'https://via.placeholder.com/60',
-            name: 'Marcus Chen',
-            username: '@mchen_designs',
-            info: '5 mutuals',
-            time: '1d',
-            hasBadge: true,
-          ),
-
-          const SizedBox(height: 32),
+          ...List.generate(3, (index) {
+            return _buildPendingRequest(
+              context,
+              avatar: 'https://via.placeholder.com/60', // Replace with real
+              name: 'Elena Rodriguez',
+              username: '@elena_style',
+              info: '12 mutual battles',
+              time: '2h',
+              hasBadge: true,
+            );
+          }),
 
           // People You Might Know
-          const Text(
-            'PEOPLE YOU MIGHT KNOW',
-            style: TextStyle(color: Colors.white70, fontSize: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'FRIENDS (3)',
+                style: TextStyle(color: Colors.white70, fontSize: 16),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: Text(
+                  'Manage',
+                  style: TextStyle(color: Theme.of(context).primaryColor),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 12),
 
-          _buildSuggestion(
+          _buildFriends(
             context,
             name: 'Sarah K.',
-            info: 'From your contacts',
+            username: "@elena_style",
             avatar: 'https://via.placeholder.com/60',
           ),
-          _buildSuggestion(
+          _buildFriends(
             context,
             name: 'David R.',
-            info: 'Similar style',
+            username: '@elena_style',
             avatar: 'https://via.placeholder.com/60',
           ),
 
@@ -152,12 +129,16 @@ class FriendsRequestScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white10,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(radius: 30, backgroundImage: NetworkImage(avatar)),
+          CircleAvatar(
+            radius: 20,
+            backgroundImage: CachedNetworkImageProvider(avatar),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -165,15 +146,15 @@ class FriendsRequestScreen extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(),
                 ),
                 Text(
                   '$username · $info',
-                  style: const TextStyle(color: Colors.white70, fontSize: 13),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall!.copyWith(color: Colors.white70),
                 ),
+                10.height(),
                 Row(
                   children: [
                     ElevatedButton(
@@ -211,75 +192,68 @@ class FriendsRequestScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSuggestion(BuildContext context,{
+  Widget _buildFriends(
+    BuildContext context, {
     required String name,
-    required String info,
+    required String username,
     required String avatar,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white10,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         children: [
-          CircleAvatar(radius: 30, backgroundImage: NetworkImage(avatar)),
+          CircleAvatar(
+            radius: 20,
+            backgroundImage: CachedNetworkImageProvider(avatar),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(name, style: Theme.of(context).textTheme.titleLarge),
                 Text(
-                  name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  info,
-                  style: const TextStyle(color: Colors.white70, fontSize: 13),
+                  username,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall!.copyWith(color: Colors.white70),
                 ),
               ],
             ),
-          ),
-          IconButton(
-            icon:   Icon(
-              Icons.add_circle,
-              color: Theme.of(context).primaryColor,
-              size: 32,
-            ),
-            onPressed: () {},
           ),
         ],
       ),
     );
   }
 
-  Widget _buildActionTile(BuildContext context,{
+  Widget _buildActionTile(
+    BuildContext context, {
     required IconData icon,
     required String title,
     required String subtitle,
     VoidCallback? onTap,
   }) {
     return ListTile(
+      contentPadding: const EdgeInsets.all(0),
       leading: CircleAvatar(
         radius: 24,
         backgroundColor: Theme.of(context).primaryColor.withOpacity(0.2),
         child: Icon(icon, color: Theme.of(context).primaryColor),
       ),
-      title: Text(
-        title,
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
+      title: Text(title, style: Theme.of(context).textTheme.titleLarge),
       subtitle: subtitle.isEmpty
           ? null
-          : Text(subtitle, style: const TextStyle(color: Colors.white70)),
+          : Text(
+              subtitle,
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall!.copyWith(color: Colors.white70),
+            ),
       trailing: const Icon(Icons.chevron_right, color: Colors.white54),
       onTap: onTap,
     );

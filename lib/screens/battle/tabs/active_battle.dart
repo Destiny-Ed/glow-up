@@ -1,3 +1,5 @@
+import 'package:avatar_stack/animated_avatar_stack.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:glow_up/screens/battle/battle_view_screen.dart';
 
@@ -31,7 +33,8 @@ class BattleActiveScreen extends StatelessWidget {
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => const BattleViewScreen(isActive: true),
+              builder: (_) =>
+                  const BattleViewScreen(isActive: true, theme: "DATE NIGHT"),
             ),
           ),
         ),
@@ -63,19 +66,29 @@ class BattleActiveScreen extends StatelessWidget {
               children: [
                 Icon(Icons.whatshot, color: Theme.of(context).primaryColor),
                 const SizedBox(width: 8),
-                Text(
-                  theme,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
+                Text(theme, style: Theme.of(context).textTheme.titleLarge),
                 const Spacer(),
-                Text(timeLeft, style: const TextStyle(color: Colors.white70)),
+                Text(
+                  timeLeft,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall!.copyWith(color: Colors.white70),
+                ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
+
+            AnimatedAvatarStack(
+              height: 40,
+              avatars: [
+                for (var n = 0; n < 15; n++)
+                  CachedNetworkImageProvider(
+                    'https://i.pravatar.cc/150?img=$n',
+                  ),
+              ],
+            ),
+            const SizedBox(height: 10),
+
             Text(
               postedCount == participants.length
                   ? 'All posted!'
@@ -83,16 +96,22 @@ class BattleActiveScreen extends StatelessWidget {
               style: TextStyle(color: Theme.of(context).primaryColor),
             ),
             const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              children: participants
-                  .map(
-                    (p) => Chip(
-                      label: Text(p, style: const TextStyle(fontSize: 12)),
-                      backgroundColor: Colors.white10,
-                    ),
-                  )
-                  .toList(),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                spacing: 8,
+                children: participants
+                    .map(
+                      (p) => Chip(
+                        label: Text(
+                          p,
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                        backgroundColor: Theme.of(context).cardColor,
+                      ),
+                    )
+                    .toList(),
+              ),
             ),
           ],
         ),

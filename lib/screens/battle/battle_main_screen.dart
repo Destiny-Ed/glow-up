@@ -34,11 +34,9 @@ class _BattleMainScreenState extends State<BattleMainScreen>
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        title: const Text(
-          'Battles',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
+        title: const Text('Battles'),
         bottom: TabBar(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           controller: _tabController,
           indicatorColor: Theme.of(context).primaryColor,
           labelColor: Theme.of(context).primaryColor,

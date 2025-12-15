@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:glow_up/core/extensions.dart';
 import 'package:glow_up/gen/assets.gen.dart';
 import 'package:glow_up/screens/contacts/contact_sync.dart';
+import 'package:glow_up/screens/profile/profile_setup.dart';
 import 'package:glow_up/widgets/custom_button.dart';
 
 class SocialAuthScreen extends StatefulWidget {
@@ -83,7 +84,7 @@ class SocialAuthScreenState extends State<SocialAuthScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const ContactSyncScreen(),
+                      builder: (context) => const ProfileSetupScreen(),
                     ),
                   );
                 },

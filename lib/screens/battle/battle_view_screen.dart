@@ -1,8 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:glow_up/widgets/post_item_widget.dart';
 import 'package:lottie/lottie.dart'; // For confetti when won
 
-class BattleViewScreen extends StatelessWidget {
+class BattleViewScreen extends StatefulWidget {
   final bool isActive;
   final String theme;
   final String? winnerUsername; // null if active or tie
@@ -16,6 +17,13 @@ class BattleViewScreen extends StatelessWidget {
     this.didUserWin = false,
   });
 
+  @override
+  State<BattleViewScreen> createState() => _BattleViewScreenState();
+}
+
+class _BattleViewScreenState extends State<BattleViewScreen> {
+  late PageController _pageController;
+
   // Dummy entries — replace with real data from provider/Firestore
   final List<Map<String, dynamic>> entries = const [
     {
@@ -23,24 +31,37 @@ class BattleViewScreen extends StatelessWidget {
       'photoUrl':
           'https://assets.vogue.com/photos/616062ff816ea2de6ec85809/master/w_2560%2Cc_limit/00_story.jpg',
       'votes': 58,
+      'caption': 'Ready for the weekend vintage jacket combo! 🛍️',
       'hasPosted': true,
+      'hashtags': '#ootd #streetstyle',
+      'timeAgo': '1d ago',
     },
     {
-      'username': '@elena_style',
+      'username': 'elena_style',
+      'caption': 'Clean fit today 🔥',
       'photoUrl':
           'https://media.istockphoto.com/id/1489381517/photo/portrait-of-gorgeous-brunette-woman-standing-city-street-fashion-model-wears-black-leather.jpg?s=612x612&w=0&k=20&c=Ji-vXNMVdjtgiO0ZH1B5d5BbIhmpwngkhx1u4QaiG1g=',
       'votes': 52,
       'hasPosted': true,
+      'timeAgo': '1d ago',
     },
     {
-      'username': '@mike_drips',
+      'username': 'mike_drips',
       'photoUrl':
           'https://gentwith.com/wp-content/uploads/2021/02/10-Men%E2%80%99s-Style-Tips-To-Look-Powerful.jpg',
       'votes': 41,
       'hasPosted': true,
+      'caption': 'Leather weather 🖤',
+      'timeAgo': '1d ago',
     },
-    {'username': '@j_smith99', 'photoUrl': '', 'votes': 0, 'hasPosted': false},
+    {'username': 'j_smith99', 'photoUrl': '', 'votes': 0, 'hasPosted': false},
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,11 +74,13 @@ class BattleViewScreen extends StatelessWidget {
         backgroundColor: Colors.black,
         elevation: 0,
         title: Text(
-          isActive ? '$theme BATTLE' : '$theme BATTLE • FINISHED',
+          widget.isActive
+              ? '${widget.theme} BATTLE'
+              : '${widget.theme} BATTLE • FINISHED',
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         centerTitle: true,
-        actions: const [IconButton(icon: Icon(Icons.share), onPressed: null)],
+        actions: [IconButton(icon: const Icon(Icons.share), onPressed: () {})],
       ),
       body: Stack(
         children: [
@@ -65,7 +88,7 @@ class BattleViewScreen extends StatelessWidget {
           Column(
             children: [
               // Timer (only if active)
-              if (isActive)
+              if (widget.isActive)
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -84,37 +107,59 @@ class BattleViewScreen extends StatelessWidget {
                 ),
 
               // Entries Grid
-              Expanded(
-                child: GridView.builder(
-                  padding: const EdgeInsets.all(16),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 0.75,
-                  ),
-                  itemCount: sortedEntries.length,
-                  itemBuilder: (context, index) {
-                    final entry = sortedEntries[index];
-                    final isWinner = !isActive && index == 0;
+              if (!widget.isActive)
+                Expanded(
+                  child: GridView.builder(
+                    padding: const EdgeInsets.all(16),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: 0.75,
+                        ),
+                    itemCount: sortedEntries.length,
+                    itemBuilder: (context, index) {
+                      final entry = sortedEntries[index];
+                      final isWinner = !widget.isActive && index == 0;
 
-                    return _buildEntryCard(
-                      context,
-                      username: entry['username'],
-                      photoUrl: entry['photoUrl'],
-                      votes: entry['votes'],
-                      hasPosted: entry['hasPosted'],
-                      isWinner: isWinner,
-                      isUserEntry: entry['username'] == 'You',
-                    );
-                  },
+                      return _buildEntryCard(
+                        context,
+                        username: entry['username'],
+                        photoUrl: entry['photoUrl'],
+                        votes: entry['votes'],
+                        hasPosted: entry['hasPosted'],
+                        isWinner: isWinner,
+                        isUserEntry: entry['username'] == 'You',
+                      );
+                    },
+                  ),
                 ),
-              ),
+
+              if (widget.isActive)
+                Expanded(
+                  child: PageView.builder(
+                    controller: _pageController,
+                    scrollDirection: Axis.vertical,
+                    // itemCount: provider.todayPosts.length,
+                    itemCount: sortedEntries.length,
+                    itemBuilder: (context, index) {
+                      // final post = provider.todayPosts[index];
+                      final post = sortedEntries[index];
+                      return buildPostItem(
+                        context,
+                        post,
+                        index,
+                        _pageController,
+                      );
+                    },
+                  ),
+                ),
             ],
           ),
 
           // Winner Overlay (only if finished and someone won)
-          if (!isActive && winnerUsername != null)
+          if (!widget.isActive && widget.winnerUsername != null)
             Container(
               color: Colors.black.withOpacity(0.7),
               child: Center(
@@ -134,7 +179,9 @@ class BattleViewScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      didUserWin ? 'YOU WON!' : '@$winnerUsername WON!',
+                      widget.didUserWin
+                          ? 'YOU WON!'
+                          : '@${widget.winnerUsername} WON!',
                       style: TextStyle(
                         color: Theme.of(context).primaryColor,
                         fontSize: 36,
@@ -179,34 +226,6 @@ class BattleViewScreen extends StatelessWidget {
             ),
         ],
       ),
-
-      // Voting Buttons (only if active)
-      bottomNavigationBar: isActive
-          ? Container(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
-              decoration: const BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildVoteButton(
-                    context,
-                    label: 'Solid',
-                    icon: Icons.thumb_up,
-                  ),
-                  _buildVoteButton(
-                    context,
-                    label: 'FIRE',
-                    icon: Icons.whatshot,
-                    isFire: true,
-                  ),
-                  _buildVoteButton(context, label: 'Skip', icon: Icons.close),
-                ],
-              ),
-            )
-          : null,
     );
   }
 

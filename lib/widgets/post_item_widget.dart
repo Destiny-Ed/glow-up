@@ -7,10 +7,27 @@ Widget buildPostItem(
   int index,
   PageController pageController,
 ) {
+  final hasPosted = (post['hasPosted'] ?? false) as bool;
   return Stack(
     fit: StackFit.expand,
     children: [
-      CachedNetworkImage(imageUrl: post['photoUrl'], fit: BoxFit.cover),
+      hasPosted
+          ? CachedNetworkImage(imageUrl: post['photoUrl'], fit: BoxFit.cover)
+          : Container(
+              color: Colors.white10,
+              child: const Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.pending, color: Colors.white54, size: 40),
+                    Text(
+                      'Not posted yet',
+                      style: TextStyle(color: Colors.white54),
+                    ),
+                  ],
+                ),
+              ),
+            ),
 
       // Dark Overlay
       Container(
@@ -71,7 +88,7 @@ Widget buildPostItem(
               ),
             ),
             Text(
-              '${post['timeAgo']}',
+              '${post['timeAgo'] ?? ""}',
               style: const TextStyle(color: Colors.white70),
             ),
             const SizedBox(height: 8),
@@ -82,7 +99,9 @@ Widget buildPostItem(
             if (post['hashtags'] != null)
               Text(
                 post['hashtags'],
-                style: const TextStyle(color: Colors.blueAccent),
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                  color: Theme.of(context).primaryColor,
+                ),
               ),
           ],
         ),

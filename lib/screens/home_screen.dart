@@ -112,6 +112,7 @@ final List<Map<String, dynamic>> dummyPosts = [
     'hashtags': '#ootd #streetstyle',
     'timeAgo': '2h ago',
     'challenge': 'STREETWEAR',
+    'hasPosted': true,
   },
   {
     'username': 'mike_drips',
@@ -120,6 +121,7 @@ final List<Map<String, dynamic>> dummyPosts = [
     'caption': 'Clean fit today 🔥',
     'hashtags': '#mensfashion #glowup',
     'timeAgo': '4h ago',
+    'hasPosted': true,
   },
   {
     'username': 'sarah_k',
@@ -127,6 +129,7 @@ final List<Map<String, dynamic>> dummyPosts = [
     'caption': 'Cozy but make it fashion',
     'hashtags': '#hoodieseason',
     'timeAgo': '6h ago',
+    'hasPosted': true,
   },
   {
     'username': 'elena_style',
@@ -135,6 +138,7 @@ final List<Map<String, dynamic>> dummyPosts = [
     'caption': 'Leather weather 🖤',
     'hashtags': '#edgy #fashion',
     'timeAgo': '1d ago',
+    'hasPosted': true,
   },
   {
     'username': 'mike_drips',
@@ -143,5 +147,6 @@ final List<Map<String, dynamic>> dummyPosts = [
     'caption': 'Clean fit today 🔥',
     'hashtags': '#mensfashion #glowup',
     'timeAgo': '4h ago',
+    'hasPosted': true,
   },
 ];

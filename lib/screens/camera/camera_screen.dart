@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:glow_up/main_activity/main_activity.dart';
+import 'package:glow_up/screens/camera/preview_fit_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -112,7 +112,9 @@ class _CameraScreenState extends State<CameraScreen> {
         // ); // Adjust route as needed
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => MainActivityScreen()),
+          MaterialPageRoute(
+            builder: (context) => PreviewFitScreen(imageFile: imageFile),
+          ),
         );
       }
     } catch (e) {
@@ -182,6 +184,24 @@ class _CameraScreenState extends State<CameraScreen> {
             ),
           ),
 
+          // Bottom text
+          // Positioned(
+          //   bottom: 120,
+          //   child: Column(
+          //     children: const [
+          //       Row(
+          //         children: [
+          //           Icon(Icons.whatshot, color: Colors.green),
+          //           Text(
+          //             ' FIRST POST REQUIRED TO JOIN',
+          //             style: TextStyle(color: Colors.green),
+          //           ),
+          //         ],
+          //       ),
+          //     ],
+          //   ),
+          // ),
+
           // Top Bar
           SafeArea(
             child: Padding(
@@ -231,7 +251,7 @@ class _CameraScreenState extends State<CameraScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // _buildTab('VIDEO', false),
-                      _buildTab('PHOTO', true),
+                      _buildTab('FIRST POST REQUIRED TO JOIN', true),
                       // _buildTab('BATTLE', false),
                     ],
                   ),
