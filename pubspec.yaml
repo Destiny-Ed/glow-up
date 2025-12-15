@@ -55,6 +55,7 @@ dependencies:
   cached_network_image: ^3.4.1
   table_calendar: ^3.2.0
   avatar_stack: ^3.0.0
+  crypto: ^3.0.7
 
 dev_dependencies:
   flutter_test:

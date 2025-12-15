@@ -13,7 +13,6 @@ class NotificationModel {
     required this.image,
     required this.notificationType,
     required this.message,
-
     required this.timestamp,
     this.isRead = false,
   });

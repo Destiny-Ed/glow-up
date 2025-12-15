@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:glow_up/providers/glow_up.dart';
+import 'package:glow_up/providers/post_vm.dart';
 import 'package:glow_up/screens/camera/camera_screen.dart';
 import 'package:glow_up/widgets/custom_button.dart';
 import 'package:glow_up/widgets/post_item_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:lottie/lottie.dart'; // For fire animation on tap
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,15 +20,15 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _pageController = PageController();
-    final provider = Provider.of<GlowUpProvider>(context, listen: false);
+    final provider = Provider.of<PostViewModel>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      provider.fetchTodayPosts(friendsOnly: _friendsMode);
+      provider.listenToTodayFeed();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<GlowUpProvider>(
+    return Consumer<PostViewModel>(
       builder: (context, provider, child) {
         // if (provider.isLoading)
         //   return const Scaffold(
@@ -96,10 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return GestureDetector(
       onTap: () {
         setState(() => _friendsMode = !_friendsMode);
-        Provider.of<GlowUpProvider>(
-          context,
-          listen: false,
-        ).fetchTodayPosts(friendsOnly: _friendsMode);
+        Provider.of<PostViewModel>(context, listen: false).listenToMyPosts();
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),

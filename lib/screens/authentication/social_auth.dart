@@ -75,11 +75,6 @@ class SocialAuthScreenState extends State<SocialAuthScreen> {
                   Icons.apple,
                   color: Theme.of(context).textTheme.titleLarge!.color,
                 ),
-                onTap: () {},
-              ),
-              10.height(),
-              SocialButton(
-                text: "Continue with phone".cap,
                 onTap: () {
                   Navigator.push(
                     context,
@@ -88,11 +83,6 @@ class SocialAuthScreenState extends State<SocialAuthScreen> {
                     ),
                   );
                 },
-                icon: Icon(
-                  Icons.phone,
-                  size: 20,
-                  color: Theme.of(context).textTheme.titleLarge!.color,
-                ),
               ),
 
               20.height(),

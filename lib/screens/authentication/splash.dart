@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:glow_up/main_activity/main_activity.dart';
+import 'package:glow_up/providers/auth.dart';
+import 'package:glow_up/providers/battle_viewmodel.dart';
+import 'package:glow_up/providers/notification_vm.dart';
+import 'package:glow_up/providers/post_vm.dart';
+import 'package:glow_up/providers/profile_vm.dart';
+import 'package:glow_up/providers/user_view_model.dart';
 import 'package:glow_up/screens/authentication/social_auth.dart';
+import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -12,12 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const SocialAuthScreen()),
-      );
-    });
+    _init();
   }
 
   @override
@@ -61,5 +64,47 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
       ),
     );
+  }
+
+  void _init() async {
+    final authVm = context.read<AuthViewModel>();
+    await authVm.loadCurrentUser();
+    Future.delayed(const Duration(seconds: 3), () {
+      if (authVm.isLoggedIn) {
+        final uid = authVm.currentUid!;
+        _initAllUidViewModels(uid);
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const MainActivityScreen()),
+        );
+
+        return;
+      }
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const SocialAuthScreen()),
+      );
+    });
+  }
+
+  void _initAllUidViewModels(String uid) {
+    // Initialize all UID-dependent ViewModels
+    Provider.of<UserViewModel>(context, listen: false)
+      ..uid = uid
+      ..initialize(uid);
+    Provider.of<ProfileViewModel>(context, listen: false)
+      ..uid = uid
+      ..initialize(uid);
+    Provider.of<BattleViewModel>(context, listen: false)
+      ..uid = uid
+      ..initialize(uid);
+    Provider.of<NotificationViewModel>(context, listen: false)
+      ..uid = uid
+      ..initialize(uid);
+
+    Provider.of<PostViewModel>(context, listen: false)
+      ..uid = uid
+      ..initialize(uid);
   }
 }
