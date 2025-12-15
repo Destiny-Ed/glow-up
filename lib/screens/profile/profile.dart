@@ -2,6 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:glow_up/core/extensions.dart';
+import 'package:glow_up/screens/leaderboard/leaderboard.dart';
+import 'package:glow_up/screens/settings/notification.dart';
+import 'package:glow_up/screens/settings/settings.dart';
 import 'package:glow_up/widgets/custom_button.dart';
 import 'package:table_calendar/table_calendar.dart'; // pubspec: table_calendar: ^3.0.9
 
@@ -30,7 +33,12 @@ class ProfileScreen extends StatelessWidget {
               Icons.settings,
               color: Theme.of(context).textTheme.titleMedium!.color,
             ),
-            onPressed: null,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SettingsScreen()),
+              );
+            },
           ),
           IconButton(
             icon: Icon(
@@ -39,10 +47,18 @@ class ProfileScreen extends StatelessWidget {
             ),
             onPressed: null,
           ),
-          // IconButton(
-          //   icon: Icon(Icons.edit, color: Theme.of(context).textTheme.titleMedium!.color),
-          //   onPressed: null,
-          // ),
+          IconButton(
+            icon: Icon(
+              Icons.notification_add,
+              color: Theme.of(context).textTheme.titleMedium!.color,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ActivityScreen()),
+              );
+            },
+          ),
         ],
       ),
       body: ListView(
@@ -82,35 +98,45 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(height: 32),
 
               // Streak Card
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.whatshot,
-                      color: Theme.of(context).primaryColor,
-                      size: 48,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const LeaderboardScreen(),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '12 Days',
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(
-                            color: Theme.of(context).primaryColor,
-                            fontSize: 32,
-                          ),
-                    ),
-                    Text(
-                      'ON FIRE',
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(color: Theme.of(context).primaryColor),
-                    ),
-                  ],
+                  );
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.whatshot,
+                        color: Theme.of(context).primaryColor,
+                        size: 48,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '12 Days',
+                        style: Theme.of(context).textTheme.headlineMedium
+                            ?.copyWith(
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 32,
+                            ),
+                      ),
+                      Text(
+                        'ON FIRE',
+                        style: Theme.of(context).textTheme.headlineMedium
+                            ?.copyWith(color: Theme.of(context).primaryColor),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 32),

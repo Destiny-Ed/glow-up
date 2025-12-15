@@ -17,6 +17,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   final TextEditingController _usernameController = TextEditingController(
     text: '@glowup_star',
   );
+  final TextEditingController _phoneController = TextEditingController();
   String _gender = 'Select your gender';
   String _country = 'Where are you from?';
   DateTime? _birthDate;
@@ -111,6 +112,33 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 style: Theme.of(context).textTheme.titleMedium,
                 decoration: InputDecoration(
                   filled: true,
+                  fillColor: Colors.white10,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Phone',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+              TextFormField(
+                controller: _phoneController,
+                style: Theme.of(context).textTheme.titleMedium,
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(
+                  filled: true,
+                  hintText: "Enter phone number",
                   fillColor: Colors.white10,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
