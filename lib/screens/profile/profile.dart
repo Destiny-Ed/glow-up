@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart'; // pubspec: table_calendar: ^3.0.9
 
@@ -265,16 +264,31 @@ class ProfileScreen extends StatelessWidget {
                   mainAxisSpacing: 8,
                   childAspectRatio: 0.8,
                 ),
-                itemCount: urls.length, // Dummy count
+                itemCount: 15, // Dummy count
                 itemBuilder: (context, index) {
                   // Use real URLs in production
-
+                  final urls = [
+                    'https://assets.vogue.com/photos/616062ff816ea2de6ec85809/master/w_2560%2Cc_limit/00_story.jpg',
+                    'https://media.istockphoto.com/id/2161831582/photo/portrait-of-luxury-modern-woman-in-new-york-city.jpg?s=612x612&w=0&k=20&c=Xa9jp15HVew7wxFRYxXTJB6bl-rNBCFbj2JFV8miPzo=',
+                    'https://media.istockphoto.com/id/1489381517/photo/portrait-of-gorgeous-brunette-woman-standing-city-street-fashion-model-wears-black-leather.jpg?s=612x612&w=0&k=20&c=Ji-vXNMVdjtgiO0ZH1B5d5BbIhmpwngkhx1u4QaiG1g=',
+                    'http://www.panaprium.com/cdn/shop/articles/different_fashion_styles_up_f6d5fe49-b92d-4840-bb1d-c57b86907c27.jpg?v=1760958147&width=1024',
+                    'https://www.panaprium.com/cdn/shop/articles/how_dress_badass_girl_1000.jpg?v=1664341397',
+                    'https://photos.peopleimages.com/picture/202211/2539340-fashion-style-and-woman-on-rooftop-in-city-with-stylish-trendy-and-modern-outfit.-summer-freedom-and-carefree-girl-in-town-with-creative-cool-and-designer-clothes-on-weekend-by-urban-building-fit_400_400.jpg',
+                    'https://www.shutterstock.com/image-photo/full-length-fashionable-blonde-woman-260nw-2450203741.jpg',
+                    'https://foxylabny.com/wp-content/uploads/2025/08/unnamed-2-1-1024x574.webp',
+                    'https://c8.alamy.com/comp/3A51KWH/portrait-of-an-african-american-woman-standing-with-hands-on-hips-looking-away-in-an-urban-streetscape-a-trendy-street-style-scene-with-a-bold-colorful-outfit-and-modern-fashion-vibe-ideal-for-lifestyle-and-fashion-campaigns-3A51KWH.jpg',
+                    'https://cdn.mos.cms.futurecdn.net/TDqFXPmU8KXtvVQCeBAbi9.jpg',
+                    'https://www.shutterstock.com/image-photo/full-body-young-happy-man-260nw-2574530679.jpg',
+                    'https://gentwith.com/wp-content/uploads/2021/02/10-Men%E2%80%99s-Style-Tips-To-Look-Powerful.jpg',
+                    'https://i.ytimg.com/vi/dyGZhARaSYg/maxresdefault.jpg',
+                    'https://americantall.com/cdn/shop/articles/Denim-Style-Guide-Banner.jpg?v=1696359361',
+                    'https://m.media-amazon.com/images/S/aplus-media-library-service-media/ebbab5a5-f399-421b-8f91-d3d26cfd5fe5.__CR0,0,600,450_PT0_SX600_V1___.jpg',
+                  ];
                   return Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Theme.of(context).cardColor),
                       image: DecorationImage(
-                        image: CachedNetworkImageProvider(urls[index]),
+                        image: NetworkImage(urls[index % urls.length]),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -288,23 +302,6 @@ class ProfileScreen extends StatelessWidget {
       ),
     );
   }
-
-  final urls = [
-    'https://media.istockphoto.com/id/2161831582/photo/portrait-of-luxury-modern-woman-in-new-york-city.jpg?s=612x612&w=0&k=20&c=Xa9jp15HVew7wxFRYxXTJB6bl-rNBCFbj2JFV8miPzo=',
-    'https://media.istockphoto.com/id/1489381517/photo/portrait-of-gorgeous-brunette-woman-standing-city-street-fashion-model-wears-black-leather.jpg?s=612x612&w=0&k=20&c=Ji-vXNMVdjtgiO0ZH1B5d5BbIhmpwngkhx1u4QaiG1g=',
-    'http://www.panaprium.com/cdn/shop/articles/different_fashion_styles_up_f6d5fe49-b92d-4840-bb1d-c57b86907c27.jpg?v=1760958147&width=1024',
-    'https://www.panaprium.com/cdn/shop/articles/how_dress_badass_girl_1000.jpg?v=1664341397',
-    'https://photos.peopleimages.com/picture/202211/2539340-fashion-style-and-woman-on-rooftop-in-city-with-stylish-trendy-and-modern-outfit.-summer-freedom-and-carefree-girl-in-town-with-creative-cool-and-designer-clothes-on-weekend-by-urban-building-fit_400_400.jpg',
-    'https://www.shutterstock.com/image-photo/full-length-fashionable-blonde-woman-260nw-2450203741.jpg',
-    'https://foxylabny.com/wp-content/uploads/2025/08/unnamed-2-1-1024x574.webp',
-    'https://c8.alamy.com/comp/3A51KWH/portrait-of-an-african-american-woman-standing-with-hands-on-hips-looking-away-in-an-urban-streetscape-a-trendy-street-style-scene-with-a-bold-colorful-outfit-and-modern-fashion-vibe-ideal-for-lifestyle-and-fashion-campaigns-3A51KWH.jpg',
-    'https://cdn.mos.cms.futurecdn.net/TDqFXPmU8KXtvVQCeBAbi9.jpg',
-    'https://www.shutterstock.com/image-photo/full-body-young-happy-man-260nw-2574530679.jpg',
-    'https://gentwith.com/wp-content/uploads/2021/02/10-Men%E2%80%99s-Style-Tips-To-Look-Powerful.jpg',
-    'https://i.ytimg.com/vi/dyGZhARaSYg/maxresdefault.jpg',
-    'https://americantall.com/cdn/shop/articles/Denim-Style-Guide-Banner.jpg?v=1696359361',
-    'https://m.media-amazon.com/images/S/aplus-media-library-service-media/ebbab5a5-f399-421b-8f91-d3d26cfd5fe5.__CR0,0,600,450_PT0_SX600_V1___.jpg',
-  ];
 
   Widget _buildStatCard(String value, String label) {
     return Container(

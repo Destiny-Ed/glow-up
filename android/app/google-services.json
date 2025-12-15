@@ -32,10 +32,10 @@
               "client_type": 3
             },
             {
-              "client_id": "924791508157-bm5i42v5clh4v0rarulpue6t4og19tum.apps.googleusercontent.com",
+              "client_id": "924791508157-am8p5k1d0pfego3qu3vu1vid32gudoci.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.thealphamerc.flutterTwitterClone"
+                "bundle_id": "com.example.glowUp"
               }
             }
           ]

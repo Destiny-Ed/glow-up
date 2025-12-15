@@ -1,21 +1,9 @@
-import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
-import 'package:glow_up/screens/camera_screen.dart';
+import 'package:glow_up/screens/camera/camera_screen.dart';
 import 'package:glow_up/services/auth_service.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
-
-  Future<void> _requestContacts() async {
-    if (await Permission.contacts.request().isGranted) {
-      await ContactsService.getContacts();
-      // Process and find friends on app
-    } else {
-      Fluttertoast.showToast(msg: 'Contacts access denied');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +32,12 @@ class OnboardingScreen extends StatelessWidget {
               ElevatedButton(
                 onPressed: () async {
                   await auth.signInWithGoogle();
-                  await _requestContacts();
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const CameraScreen(isFirst: true)));
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const CameraScreen(isFirst: true),
+                    ),
+                  );
                 },
                 child: const Text('Sign in with Google'),
               ),
@@ -53,8 +45,12 @@ class OnboardingScreen extends StatelessWidget {
               ElevatedButton(
                 onPressed: () async {
                   await auth.signInWithApple();
-                  await _requestContacts();
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const CameraScreen(isFirst: true)));
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const CameraScreen(isFirst: true),
+                    ),
+                  );
                 },
                 child: const Text('Sign in with Apple'),
               ),
@@ -63,8 +59,12 @@ class OnboardingScreen extends StatelessWidget {
                 onPressed: () async {
                   // Phone sign-in flow
                   await auth.signInWithPhone('+1'); // Placeholder
-                  await _requestContacts();
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const CameraScreen(isFirst: true)));
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const CameraScreen(isFirst: true),
+                    ),
+                  );
                 },
                 child: const Text('Sign in with Phone'),
               ),

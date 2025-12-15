@@ -45,5 +45,21 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<key>NSContactsUsageDescription</key>
+	<string>GlowUp needs access to your contacts to find friends already on the app and make battles more fun!</string>
+
+	<key>NSCameraUsageDescription</key>
+	<string>GlowUp needs access to your camera to let you snap full-body outfit photos for your daily GlowUp battle.</string>
+
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>GlowUp needs access to your photo library so you can select an existing outfit photo from your camera roll to post as today's fit.</string>
+
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>GlowUp saves your posted GlowUp photos to your library for easy sharing and backups.</string>
+
+	<key>NSMicrophoneUsageDescription</key>
+	<string>GlowUp needs microphone access to record sound when capturing video outfits for battles.</string>
+	
 </dict>
 </plist>

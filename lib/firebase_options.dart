@@ -68,6 +68,7 @@ class DefaultFirebaseOptions {
     databaseURL: 'https://word-f43ac-default-rtdb.firebaseio.com',
     storageBucket: 'word-f43ac.appspot.com',
     androidClientId: '924791508157-chbecjsnbe6gqrf9ue4d32fg24nmarp8.apps.googleusercontent.com',
+    iosClientId: '924791508157-am8p5k1d0pfego3qu3vu1vid32gudoci.apps.googleusercontent.com',
     iosBundleId: 'com.example.glowUp',
   );
 
@@ -79,6 +80,7 @@ class DefaultFirebaseOptions {
     databaseURL: 'https://word-f43ac-default-rtdb.firebaseio.com',
     storageBucket: 'word-f43ac.appspot.com',
     androidClientId: '924791508157-chbecjsnbe6gqrf9ue4d32fg24nmarp8.apps.googleusercontent.com',
+    iosClientId: '924791508157-am8p5k1d0pfego3qu3vu1vid32gudoci.apps.googleusercontent.com',
     iosBundleId: 'com.example.glowUp',
   );
 
@@ -92,4 +94,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'word-f43ac.appspot.com',
     measurementId: 'G-0S45Q65041',
   );
+
 }
