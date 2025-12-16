@@ -18,13 +18,16 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings, color: Colors.white),
+            icon: Icon(
+              Icons.settings,
+              color: Theme.of(context).textTheme.titleLarge!.color,
+            ),
             onPressed: () {
               Navigator.push(
                 context,
@@ -32,12 +35,18 @@ class ProfileScreen extends StatelessWidget {
               );
             },
           ),
-          const IconButton(
-            icon: Icon(Icons.share, color: Colors.white),
+          IconButton(
+            icon: Icon(
+              Icons.share,
+              color: Theme.of(context).textTheme.titleLarge!.color,
+            ),
             onPressed: null,
           ),
           IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.white),
+            icon: Icon(
+              Icons.notifications,
+              color: Theme.of(context).textTheme.titleLarge!.color,
+            ),
             onPressed: () {
               Navigator.push(
                 context,
@@ -90,10 +99,12 @@ class ProfileScreen extends StatelessWidget {
                                 )
                               : null,
                           child: user.profilePictureUrl == null
-                              ? const Icon(
+                              ? Icon(
                                   Icons.person,
                                   size: 50,
-                                  color: Colors.white54,
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.titleLarge!.color,
                                 )
                               : null,
                         ),
@@ -107,13 +118,11 @@ class ProfileScreen extends StatelessWidget {
                   16.height(),
                   Text(
                     '@${user.userName ?? 'username'}',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.headlineMedium?.copyWith(color: Colors.white),
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   Text(
                     user.bio ?? 'Fashion enthusiast & daily battler',
-                    style: const TextStyle(color: Colors.white70, fontSize: 16),
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                   32.height(),
 
@@ -131,7 +140,7 @@ class ProfileScreen extends StatelessWidget {
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
+                        color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(24),
                       ),
                       child: Column(
@@ -203,24 +212,28 @@ class ProfileScreen extends StatelessWidget {
                       8.width(),
                       Text(
                         'Trophy Room',
-                        style: Theme.of(context).textTheme.headlineMedium
-                            ?.copyWith(color: Colors.white),
+                        style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       const Spacer(),
                       DropdownButton<String>(
                         value: 'December',
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.keyboard_arrow_down,
-                          color: Colors.white70,
+                          color: Theme.of(context).textTheme.titleLarge!.color,
                         ),
-                        dropdownColor: Colors.grey[900],
+                        dropdownColor: Theme.of(context).cardColor,
                         underline: Container(),
-                        style: const TextStyle(color: Colors.white),
+                        style: Theme.of(context).textTheme.titleLarge,
                         items: ['October', 'November', 'December']
                             .map(
                               (month) => DropdownMenuItem(
                                 value: month,
-                                child: Text(month),
+                                child: Text(
+                                  month,
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium,
+                                ),
                               ),
                             )
                             .toList(),
@@ -237,13 +250,17 @@ class ProfileScreen extends StatelessWidget {
                     calendarFormat: CalendarFormat.month,
                     headerVisible: false,
                     daysOfWeekHeight: 40,
-                    daysOfWeekStyle: const DaysOfWeekStyle(
-                      weekdayStyle: TextStyle(color: Colors.white70),
-                      weekendStyle: TextStyle(color: Colors.white70),
+                    daysOfWeekStyle: DaysOfWeekStyle(
+                      weekdayStyle: Theme.of(context).textTheme.titleMedium!,
+                      weekendStyle: Theme.of(context).textTheme.titleMedium!,
                     ),
                     calendarStyle: CalendarStyle(
-                      defaultTextStyle: const TextStyle(color: Colors.white70),
-                      weekendTextStyle: const TextStyle(color: Colors.white70),
+                      defaultTextStyle: Theme.of(
+                        context,
+                      ).textTheme.titleMedium!,
+                      weekendTextStyle: Theme.of(
+                        context,
+                      ).textTheme.titleMedium!,
                       outsideTextStyle: const TextStyle(color: Colors.white30),
                       todayDecoration: BoxDecoration(
                         color: Colors.transparent,
@@ -253,7 +270,7 @@ class ProfileScreen extends StatelessWidget {
                           width: 2,
                         ),
                       ),
-                      todayTextStyle: const TextStyle(color: Colors.white),
+                      todayTextStyle: Theme.of(context).textTheme.titleMedium!,
                     ),
                     calendarBuilders: CalendarBuilders(
                       defaultBuilder: (context, day, focusedDay) {
@@ -281,7 +298,7 @@ class ProfileScreen extends StatelessWidget {
                           return Center(
                             child: Text(
                               '${day.day}',
-                              style: const TextStyle(color: Colors.white70),
+                              style: Theme.of(context).textTheme.titleMedium,
                             ),
                           );
                         }
@@ -329,9 +346,7 @@ class ProfileScreen extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       'Gallery',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.headlineLarge?.copyWith(color: Colors.white),
+                      style: Theme.of(context).textTheme.headlineLarge,
                     ),
                   ),
                   16.height(),
@@ -383,7 +398,7 @@ Widget _buildStatCard(BuildContext context, String value, String label) {
   return Container(
     padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 32),
     decoration: BoxDecoration(
-      color: Colors.white.withOpacity(0.1),
+      color: Theme.of(context).cardColor,
       borderRadius: BorderRadius.circular(20),
     ),
     child: Column(
@@ -392,14 +407,9 @@ Widget _buildStatCard(BuildContext context, String value, String label) {
           value,
           style: Theme.of(
             context,
-          ).textTheme.titleMedium?.copyWith(fontSize: 28, color: Colors.white),
+          ).textTheme.titleMedium?.copyWith(fontSize: 28),
         ),
-        Text(
-          label,
-          style: Theme.of(
-            context,
-          ).textTheme.titleSmall?.copyWith(color: Colors.white70),
-        ),
+        Text(label, style: Theme.of(context).textTheme.titleSmall),
       ],
     ),
   );

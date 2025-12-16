@@ -1,8 +1,5 @@
-// viewmodels/post_viewmodel.dart
-
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:glow_up/models/post_model.dart';
 import 'package:glow_up/models/user_model.dart';
@@ -22,7 +19,8 @@ class PostViewModel extends BaseViewModel {
   List<PostModel> get todayPosts => _todayPosts;
   List<PostModel> get myPosts => _myPosts;
   PostModel? get currentUserTodayPost => _currentUserTodayPost;
-  bool get hasPostedToday => _currentUserTodayPost != null;
+  bool get hasPostedToday =>
+      _currentUserTodayPost != null && _currentUserTodayPost!.id.isNotEmpty;
 
   Map<String, UserModel> _userCache = {};
 

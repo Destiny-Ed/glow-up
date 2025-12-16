@@ -26,10 +26,19 @@ class UserService {
   Future<bool> isUsernameAvailable(String username) async {
     if (username.isEmpty) return false;
 
-    final lower = username.substring(1).toLowerCase(); // Remove @ and lowercase
+    final lower = username.toLowerCase(); // Remove @ and lowercase
 
     final doc = await _db.collection('usernames').doc(lower).get();
-    return !doc.exists;
+
+    if (!doc.exists) {
+      return true;
+    }
+
+    // Username exists — check if it's owned by current user
+    final currentUser = await getCurrentUser();
+    if (currentUser.userName == null) return false;
+
+    return currentUser.userName?.toLowerCase() == lower;
   }
 
   // Reserve username on save

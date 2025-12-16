@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:glow_up/core/extensions.dart';
 import 'package:glow_up/gen/assets.gen.dart';
 import 'package:glow_up/providers/auth.dart';
+import 'package:glow_up/providers/user_view_model.dart';
 import 'package:glow_up/screens/contacts/contact_sync.dart';
 import 'package:glow_up/screens/profile/profile_setup.dart';
 import 'package:glow_up/widgets/custom_button.dart';
@@ -97,6 +98,10 @@ class _SocialAuthScreenState extends State<SocialAuthScreen> {
                             : () async {
                                 final result = await authVm.signInWithGoogle();
 
+                                context.read<UserViewModel>()
+                                  ..uid = authVm.currentUid ?? ""
+                                  ..initialize(authVm.currentUid ?? "");
+
                                 if (result['user'] != null) {
                                   if (authVm.isNewUser) {
                                     // New user → Profile Setup
@@ -143,6 +148,10 @@ class _SocialAuthScreenState extends State<SocialAuthScreen> {
                             ? null
                             : () async {
                                 final result = await authVm.signInWithApple();
+
+                                context.read<UserViewModel>()
+                                  ..uid = authVm.currentUid ?? ""
+                                  ..initialize(authVm.currentUid ?? "");
 
                                 if (result['user'] != null) {
                                   if (authVm.isNewUser) {

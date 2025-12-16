@@ -104,8 +104,9 @@ class UserViewModel extends BaseViewModel {
 
     _isCheckingUsername = true;
     setLoading(false);
+    final lower = username.replaceFirst('@', '').toLowerCase();
 
-    final available = await _userService.isUsernameAvailable(username);
+    final available = await _userService.isUsernameAvailable(lower);
 
     _isUsernameAvailable = available;
     _usernameError = available ? null : 'Username already taken';

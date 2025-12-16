@@ -129,11 +129,7 @@ class _ContactSyncScreenState extends State<ContactSyncScreen> {
                               ? "$friendsCount contacts are already here — join them?"
                               : "No friends found yet",
                           style: Theme.of(context).textTheme.titleLarge!
-                              .copyWith(
-                                color: friendsCount > 0
-                                    ? Theme.of(context).primaryColor
-                                    : Colors.white70,
-                              ),
+                              .copyWith(color: Theme.of(context).primaryColor),
                         ),
                       ],
                     ),

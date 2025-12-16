@@ -283,7 +283,7 @@ Widget _buildVoteButton(
                       ? Theme.of(
                           context,
                         ).primaryColor.withOpacity(hasVoted ? 0.5 : 0.9)
-                      : Colors.black54,
+                      : Theme.of(context).cardColor,
                   boxShadow: actionLabel == VotingAction.fire && !hasVoted
                       ? [
                           BoxShadow(
@@ -296,24 +296,28 @@ Widget _buildVoteButton(
                       : [],
                 ),
                 child: isLoading
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 24,
                         height: 24,
                         child: CircularProgressIndicator(
-                          color: Colors.white,
+                          color: Theme.of(context).textTheme.titleLarge!.color,
                           strokeWidth: 2,
                         ),
                       )
-                    : Icon(icon, color: Colors.white, size: 24),
+                    : Icon(
+                        icon,
+                        color: Theme.of(context).textTheme.titleLarge!.color,
+                        size: 24,
+                      ),
               ),
               8.height(),
               Text(
                 actionLabel == VotingAction.fire
                     ? 'FIRE'
                     : actionLabel.name.capitalize,
-                style: hasVoted
-                    ? TextStyle(color: color, fontWeight: FontWeight.bold)
-                    : Theme.of(context).textTheme.titleMedium,
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  color: Theme.of(context).cardColor,
+                ),
               ),
             ],
           ),

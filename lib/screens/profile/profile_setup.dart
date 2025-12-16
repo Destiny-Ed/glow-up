@@ -30,13 +30,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const Text(
-          'Profile Setup',
-          style: TextStyle(color: Colors.white),
-        ),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        title: const Text('Profile Setup'),
       ),
       body: SafeArea(
         child: Padding(
@@ -134,46 +131,51 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
                     // Username
                     _buildLabel('Username'),
-                    TextFormField(
-                      controller: _usernameController,
-                      style: const TextStyle(color: Colors.white),
-                      onChanged: (value) {
-                        userVm.updateUsername(value);
-                        userVm.checkUsername(value);
-                      },
-                      decoration: InputDecoration(
-                        hintText: "@username",
-                        hintStyle: const TextStyle(color: Colors.white54),
-                        filled: true,
-                        fillColor: Colors.white10,
-                        suffixIcon: userVm.isCheckingUsername
-                            ? SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: TextFormField(
+                        controller: _usernameController,
+
+                        style: Theme.of(context).textTheme.titleMedium,
+                        onChanged: (value) {
+                          userVm.updateUsername(value);
+                          userVm.checkUsername(value);
+                        },
+                        decoration: InputDecoration(
+                          hintText: "@username",
+                          hintStyle: Theme.of(context).textTheme.titleMedium,
+                          suffixIcon: userVm.isCheckingUsername
+                              ? SizedBox(
+                                  width: 10,
+                                  height: 10,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                )
+                              : userVm.isUsernameAvailable
+                              ? Icon(
+                                  Icons.check_circle,
                                   color: Theme.of(context).primaryColor,
-                                ),
-                              )
-                            : userVm.isUsernameAvailable
-                            ? Icon(
-                                Icons.check_circle,
-                                color: Theme.of(context).primaryColor,
-                              )
-                            : const Icon(Icons.error, color: Colors.red),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                            width: 2,
+                                )
+                              : const Icon(Icons.error, color: Colors.red),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: BorderSide(
+                              color: Theme.of(context).primaryColor,
+                              width: 2,
+                            ),
                           ),
                         ),
                       ),
@@ -195,107 +197,133 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     // Phone
                     _buildLabel('Phone'),
 
-                    TextFormField(
-                      controller: _phoneController,
-                      keyboardType: TextInputType.phone,
-                      style: const TextStyle(color: Colors.white),
-                      onChanged: userVm.updatePhone,
-                      decoration: _inputDecoration(
-                        hintText: '+1 (555) 123-4567',
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: TextFormField(
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                        style: Theme.of(context).textTheme.titleMedium,
+                        onChanged: userVm.updatePhone,
+                        decoration: _inputDecoration(
+                          hintText: '+1 (555) 123-4567',
+                        ),
                       ),
                     ),
                     20.height(),
 
                     // Gender
                     _buildLabel('Gender'),
-                    DropdownButtonFormField<String>(
-                      value: userVm.gender,
-                      items:
-                          [
-                                'Select your gender',
-                                'Male',
-                                'Female',
-                                'Non-binary',
-                                'Prefer not to say',
-                              ]
-                              .map(
-                                (g) => DropdownMenuItem(
-                                  value: g,
-                                  child: Text(
-                                    g,
-                                    style: const TextStyle(color: Colors.white),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: DropdownButtonFormField<String>(
+                        value: userVm.gender,
+                        items:
+                            [
+                                  'Select your gender',
+                                  'Male',
+                                  'Female',
+                                  'Non-binary',
+                                  'Prefer not to say',
+                                ]
+                                .map(
+                                  (g) => DropdownMenuItem(
+                                    value: g,
+                                    child: Text(
+                                      g,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.titleMedium,
+                                    ),
                                   ),
-                                ),
-                              )
-                              .toList(),
-                      onChanged: (value) {
-                        if (value == null) return;
-                        userVm.updateGender(value);
-                      },
-                      decoration: _inputDecoration(),
-                      dropdownColor: Colors.grey[900],
+                                )
+                                .toList(),
+                        onChanged: (value) {
+                          if (value == null) return;
+                          userVm.updateGender(value);
+                        },
+                        decoration: _inputDecoration(),
+                        dropdownColor: Colors.grey[900],
+                      ),
                     ),
                     20.height(),
 
                     // Country
                     _buildLabel('Country'),
-                    DropdownButtonFormField<String>(
-                      value: userVm.country,
-                      items:
-                          [
-                                'Where are you from?',
-                                'United States',
-                                'United Kingdom',
-                                'Canada',
-                                'Australia',
-                                'Other',
-                              ]
-                              .map(
-                                (c) => DropdownMenuItem(
-                                  value: c,
-                                  child: Text(
-                                    c,
-                                    style: const TextStyle(color: Colors.white),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: DropdownButtonFormField<String>(
+                        value: userVm.country,
+                        items:
+                            [
+                                  'Where are you from?',
+                                  'United States',
+                                  'United Kingdom',
+                                  'Canada',
+                                  'Australia',
+                                  'Other',
+                                ]
+                                .map(
+                                  (c) => DropdownMenuItem(
+                                    value: c,
+                                    child: Text(
+                                      c,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.titleMedium,
+                                    ),
                                   ),
-                                ),
-                              )
-                              .toList(),
-                      onChanged: (value) {
-                        if (value == null) return;
-                        userVm.updateCountry(value);
-                      },
-                      decoration: _inputDecoration(),
-                      dropdownColor: Colors.grey[900],
+                                )
+                                .toList(),
+                        onChanged: (value) {
+                          if (value == null) return;
+                          userVm.updateCountry(value);
+                        },
+                        decoration: _inputDecoration(),
+                        dropdownColor: Colors.grey[900],
+                      ),
                     ),
                     20.height(),
 
                     // Date of Birth
                     _buildLabel('Date of Birth'),
-                    TextFormField(
-                      style: Theme.of(context).textTheme.titleMedium,
-                      controller: _dobController,
-                      readOnly: true,
-                      onTap: () async {
-                        final date = await showDatePicker(
-                          context: context,
-                          initialDate: userVm.birthDate ?? DateTime(2000),
-                          firstDate: DateTime(1900),
-                          lastDate: DateTime.now(),
-                        );
-                        if (date != null) userVm.updateBirthDate(date);
-                      },
-                      decoration: _inputDecoration(
-                        hintText: userVm.birthDate == null
-                            ? 'mm/dd/yyyy'
-                            : '${userVm.birthDate!.month.toString().padLeft(2, '0')}/${userVm.birthDate!.day.toString().padLeft(2, '0')}/${userVm.birthDate!.year}',
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: TextFormField(
+                        style: Theme.of(context).textTheme.titleMedium,
+                        controller: _dobController,
+                        readOnly: true,
+                        onTap: () async {
+                          final date = await showDatePicker(
+                            context: context,
+                            initialDate: userVm.birthDate ?? DateTime(2000),
+                            firstDate: DateTime(1900),
+                            lastDate: DateTime.now(),
+                          );
+                          if (date != null) userVm.updateBirthDate(date);
+                        },
+                        decoration: _inputDecoration(
+                          hintText: userVm.birthDate == null
+                              ? 'mm/dd/yyyy'
+                              : '${userVm.birthDate!.month.toString().padLeft(2, '0')}/${userVm.birthDate!.day.toString().padLeft(2, '0')}/${userVm.birthDate!.year}',
+                        ),
                       ),
                     ),
                     8.height(),
                     Text(
                       'This won\'t be shown publicly.',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodyMedium?.copyWith(color: Colors.white54),
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     20.height(),
 
@@ -340,19 +368,14 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       alignment: Alignment.centerLeft,
-      child: Text(
-        text,
-        style: Theme.of(
-          context,
-        ).textTheme.titleMedium?.copyWith(color: Colors.white),
-      ),
+      child: Text(text, style: Theme.of(context).textTheme.titleMedium),
     );
   }
 
   InputDecoration _inputDecoration({String? hintText}) {
     return InputDecoration(
       hintText: hintText,
-      hintStyle: const TextStyle(color: Colors.white54),
+      hintStyle: Theme.of(context).textTheme.titleMedium,
       filled: true,
       fillColor: Colors.white10,
       border: OutlineInputBorder(

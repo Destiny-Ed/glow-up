@@ -124,7 +124,7 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
           // Camera Preview or Picked Image
@@ -139,8 +139,10 @@ class _CameraScreenState extends State<CameraScreen> {
                 if (snapshot.connectionState == ConnectionState.done) {
                   return Positioned.fill(child: CameraPreview(_controller!));
                 }
-                return const Center(
-                  child: CircularProgressIndicator(color: Colors.white),
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: Theme.of(context).textTheme.titleLarge!.color,
+                  ),
                 );
               },
             ),
@@ -172,7 +174,7 @@ class _CameraScreenState extends State<CameraScreen> {
                   MediaQuery.of(context).size.width * 0.6,
                   MediaQuery.of(context).size.height * 0.4,
                 ),
-                painter: HumanPosePainter(),
+                painter: HumanPosePainter(context: context),
               ),
             ),
           ),
@@ -202,18 +204,19 @@ class _CameraScreenState extends State<CameraScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.close,
-                      color: Colors.white,
-                      size: 30,
+                  if (context.owner != null)
+                    IconButton(
+                      icon: Icon(
+                        Icons.close,
+                        color: Theme.of(context).textTheme.titleLarge!.color,
+                        size: 30,
+                      ),
+                      onPressed: () => Navigator.pop(context),
                     ),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  const Text(
+                  Text(
                     'Snap Today\'s Fit',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Theme.of(context).textTheme.titleLarge!.color,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -221,7 +224,7 @@ class _CameraScreenState extends State<CameraScreen> {
                   IconButton(
                     icon: Icon(
                       _isFlashOn ? Icons.flash_on : Icons.flash_off,
-                      color: Colors.white,
+                      color: Theme.of(context).textTheme.titleLarge!.color,
                       size: 30,
                     ),
                     onPressed: _toggleFlash,
@@ -278,7 +281,9 @@ class _CameraScreenState extends State<CameraScreen> {
           Text(
             text,
             style: TextStyle(
-              color: active ? Theme.of(context).primaryColor : Colors.white70,
+              color: active
+                  ? Theme.of(context).primaryColor
+                  : Theme.of(context).textTheme.titleLarge!.color,
               fontSize: 16,
             ),
           ),
@@ -299,11 +304,15 @@ class _CameraScreenState extends State<CameraScreen> {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(14),
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: Colors.black54,
+          color: Theme.of(context).cardColor,
         ),
-        child: Icon(icon, color: Colors.white, size: 28),
+        child: Icon(
+          icon,
+          color: Theme.of(context).textTheme.titleLarge!.color,
+          size: 28,
+        ),
       ),
     );
   }
@@ -316,8 +325,11 @@ class _CameraScreenState extends State<CameraScreen> {
         height: 80,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white, width: 6),
-          color: Colors.white,
+          border: Border.all(
+            color: Theme.of(context).textTheme.titleLarge!.color!,
+            width: 6,
+          ),
+          color: Theme.of(context).textTheme.titleLarge!.color,
         ),
       ),
     );
@@ -326,10 +338,14 @@ class _CameraScreenState extends State<CameraScreen> {
 
 // Custom Painter for Human Pose Silhouette
 class HumanPosePainter extends CustomPainter {
+  final BuildContext context;
+
+  HumanPosePainter({super.repaint, required this.context});
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.6)
+      ..color = Theme.of(context).textTheme.titleLarge!.color!.withOpacity(0.6)
       ..strokeWidth = 4
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;

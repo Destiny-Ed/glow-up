@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:glow_up/core/extensions.dart';
 import 'package:glow_up/providers/post_vm.dart';
 import 'package:glow_up/providers/user_view_model.dart';
 import 'package:glow_up/screens/battle/battle_main_screen.dart';
@@ -24,7 +24,7 @@ class _MainActivityScreenState extends State<MainActivityScreen> {
     const HomeScreen(), // Index 0
     const BattleMainScreen(), // index 1
     const FriendsRequestScreen(), // Index 2
-    ProfileScreen(), // Index 3
+    const ProfileScreen(), // Index 3
   ];
 
   void _onItemTapped(int index) {
@@ -61,13 +61,13 @@ class _MainActivityScreenState extends State<MainActivityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: const Color(0xFF0A0E0A),
+        backgroundColor: Theme.of(context).cardColor,
         selectedItemColor: Theme.of(context).primaryColor,
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: Theme.of(context).textTheme.titleLarge!.color,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [

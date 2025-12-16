@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:glow_up/core/extensions.dart';
 
@@ -14,22 +13,23 @@ Widget emptyWidget(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 80, color: Colors.white24),
+          Icon(
+            icon,
+            size: 80,
+            color: Theme.of(context).textTheme.titleLarge!.color!.lighten(),
+          ),
           30.height(),
           Text(
             title.capitalize,
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           16.height(),
           Text(
             subtitle.capitalize,
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(color: Colors.white70),
+            style: Theme.of(context).textTheme.titleMedium,
             textAlign: TextAlign.center,
           ),
           40.height(),

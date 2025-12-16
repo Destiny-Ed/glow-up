@@ -80,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
         final posts = postVm.todayPosts;
 
         return Scaffold(
-          backgroundColor: Colors.black,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: Stack(
             children: [
               posts.isEmpty
@@ -171,13 +171,13 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
-          color: active ? Colors.white38 : Colors.transparent,
+          color: active ? Theme.of(context).cardColor : Colors.transparent,
           borderRadius: BorderRadius.circular(30),
         ),
         child: Text(
           text,
           style: TextStyle(
-            color: active ? Colors.white : Colors.white70,
+            color: Theme.of(context).textTheme.titleLarge!.color,
             fontWeight: FontWeight.bold,
           ),
         ),

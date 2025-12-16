@@ -12,20 +12,12 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final uid = context.read<UserViewModel>().user?.id ?? '';
-
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'Settings',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-        ),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+
+        title: const Text('Settings'),
       ),
       body: Consumer2<UserViewModel, SettingsViewModel>(
         builder: (context, userVm, settingsVm, child) {
@@ -46,7 +38,8 @@ class SettingsScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white10,
+                  color: Theme.of(context).cardColor,
+
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Row(
@@ -75,13 +68,9 @@ class SettingsScreen extends StatelessWidget {
                               color: Theme.of(context).primaryColor,
                               shape: BoxShape.circle,
                             ),
-                            child: const Text(
+                            child: Text(
                               'PRO',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 10,
-                              ),
+                              style: Theme.of(context).textTheme.titleSmall,
                             ),
                           ),
                         ),
@@ -94,15 +83,11 @@ class SettingsScreen extends StatelessWidget {
                         children: [
                           Text(
                             user.name ?? 'Alex Stylez',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context).textTheme.headlineMedium,
                           ),
                           Text(
                             '@${user.userName ?? 'stylemaster'} • Battle Rank: #${user.votes}',
-                            style: const TextStyle(color: Colors.white70),
+                            style: Theme.of(context).textTheme.titleMedium,
                           ),
                         ],
                       ),
@@ -127,10 +112,7 @@ class SettingsScreen extends StatelessWidget {
 
               30.height(),
 
-              const Text(
-                'ACCOUNT',
-                style: TextStyle(color: Colors.white70, fontSize: 14),
-              ),
+              Text('ACCOUNT', style: Theme.of(context).textTheme.titleLarge),
               12.height(),
               _settingsTile(
                 context,
@@ -148,9 +130,9 @@ class SettingsScreen extends StatelessWidget {
 
               30.height(),
 
-              const Text(
+              Text(
                 'NOTIFICATIONS',
-                style: TextStyle(color: Colors.white70, fontSize: 14),
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               12.height(),
               _settingsTile(
@@ -177,9 +159,9 @@ class SettingsScreen extends StatelessWidget {
 
               30.height(),
 
-              const Text(
+              Text(
                 'PRIVACY & SUPPORT',
-                style: TextStyle(color: Colors.white70, fontSize: 14),
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               12.height(),
               _settingsTile(
@@ -255,25 +237,28 @@ class SettingsScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  child: const Text(
+                  child: Text(
                     'Log Out',
-                    style: TextStyle(color: Colors.red, fontSize: 18),
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontSize: 18,
+                    ),
                   ),
                 ),
               ),
 
               10.height(),
 
-              const Center(
+              Center(
                 child: Text(
                   'Outfit Battles v2.4.0',
-                  style: TextStyle(color: Colors.white54),
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
-              const Center(
+              Center(
                 child: Text(
                   'Made with ❤️ for fashion',
-                  style: TextStyle(color: Colors.white54),
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
 
@@ -300,42 +285,39 @@ class SettingsScreen extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white10,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
           children: [
             CircleAvatar(
               radius: 20,
-              backgroundColor: Colors.white10,
-              child: Icon(icon, color: Colors.white),
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              child: Icon(
+                icon,
+                color: Theme.of(context).textTheme.titleLarge!.color,
+              ),
             ),
             16.width(),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  Text(title, style: Theme.of(context).textTheme.titleLarge),
                   if (subtitle != null)
                     Text(
                       subtitle,
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 13,
-                      ),
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                 ],
               ),
             ),
             trailing ??
                 (hasArrow
-                    ? const Icon(Icons.chevron_right, color: Colors.white54)
+                    ? Icon(
+                        Icons.chevron_right,
+                        color: Theme.of(context).textTheme.titleMedium!.color,
+                      )
                     : const SizedBox()),
           ],
         ),

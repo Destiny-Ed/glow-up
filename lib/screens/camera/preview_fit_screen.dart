@@ -114,17 +114,24 @@ class _PreviewFitScreenState extends State<PreviewFitScreen> {
             20.height(),
 
             // Tags Field
-            Padding(
+            Container(
               padding: const EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(16),
+              ),
               child: TextField(
                 controller: _tagsController,
-                style: const TextStyle(color: Colors.white),
+                style: Theme.of(context).textTheme.titleMedium,
                 decoration: InputDecoration(
                   hintText: 'Add title or tags (optional)...',
-                  hintStyle: const TextStyle(color: Colors.white54),
-                  prefixIcon: const Icon(Icons.tag, color: Colors.white54),
-                  filled: true,
-                  fillColor: Colors.white10,
+                  hintStyle: Theme.of(context).textTheme.titleMedium,
+                  prefixIcon: Icon(
+                    Icons.tag,
+                    color: Theme.of(
+                      context,
+                    ).textTheme.titleMedium!.color?.lighten(),
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide.none,
@@ -141,7 +148,7 @@ class _PreviewFitScreenState extends State<PreviewFitScreen> {
                     ),
                   ),
                   // suffixText: 'e.g. #Streetwear #DateNight',
-                  suffixStyle: const TextStyle(color: Colors.white54),
+                  // suffixStyle: const TextStyle(color: Colors.white54),s
                 ),
               ),
             ),
@@ -169,9 +176,9 @@ class _PreviewFitScreenState extends State<PreviewFitScreen> {
             // Retake
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text(
+              child: Text(
                 'Retake Photo',
-                style: TextStyle(color: Colors.white70, fontSize: 16),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
 
