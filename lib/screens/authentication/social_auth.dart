@@ -1,18 +1,22 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:glow_up/core/extensions.dart';
 import 'package:glow_up/gen/assets.gen.dart';
+import 'package:glow_up/providers/auth.dart';
 import 'package:glow_up/screens/contacts/contact_sync.dart';
 import 'package:glow_up/screens/profile/profile_setup.dart';
 import 'package:glow_up/widgets/custom_button.dart';
+import 'package:provider/provider.dart';
 
 class SocialAuthScreen extends StatefulWidget {
   const SocialAuthScreen({super.key});
 
   @override
-  SocialAuthScreenState createState() => SocialAuthScreenState();
+  State<SocialAuthScreen> createState() => _SocialAuthScreenState();
 }
 
-class SocialAuthScreenState extends State<SocialAuthScreen> {
+class _SocialAuthScreenState extends State<SocialAuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -33,92 +37,186 @@ class SocialAuthScreenState extends State<SocialAuthScreen> {
         body: SafeArea(
           child: Column(
             children: [
-              const Spacer(),
+              const Spacer(flex: 2),
 
               CircleAvatar(
-                radius: 40,
+                radius: 60,
                 backgroundColor: Theme.of(context).cardColor,
-                child: Image.asset(
-                  Assets.google.path,
-                  width: MediaQuery.of(context).size.width - 100,
+                child: ClipOval(
+                  child: Image.asset(
+                    Assets.google.path, // Make sure you have a logo in assets
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
-              20.height(),
+
+              30.height(),
+
               Text(
-                "outfit clash".cap,
+                "Outfit Clash".cap,
                 textAlign: TextAlign.center,
-                style: Theme.of(
-                  context,
-                ).textTheme.headlineLarge?.copyWith(fontSize: 30),
+                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
-              10.height(),
+
+              12.height(),
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 35.0),
                 child: Text(
-                  "rate fits. Win battles. Daily".capitalize,
+                  "Rate fits. Win battles. Daily.".capitalize,
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium!
-                    ..color?.darken(),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontSize: 20,
+                    color: Colors.white70,
+                  ),
                 ),
               ),
-              Spacer(),
-              //Social buttons
-              SocialButton(
-                text: "continue with apple".cap,
-                icon: Image.asset(Assets.google.path, width: 35),
-                onTap: () {},
-              ),
-              10.height(),
-              SocialButton(
-                text: "continue with apple".cap,
-                icon: Icon(
-                  Icons.apple,
-                  color: Theme.of(context).textTheme.titleLarge!.color,
-                ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ProfileSetupScreen(),
-                    ),
+
+              const Spacer(flex: 3),
+
+              // Social Buttons with ViewModel
+              Consumer<AuthViewModel>(
+                builder: (context, authVm, child) {
+                  return Column(
+                    children: [
+                      // Google Sign In
+                      SocialButton(
+                        text: authVm.isLoading
+                            ? "Loading...".cap
+                            : "Continue with Google".cap,
+                        icon: Image.asset(Assets.google.path, width: 30),
+
+                        onTap: authVm.isLoading
+                            ? null
+                            : () async {
+                                final result = await authVm.signInWithGoogle();
+
+                                if (result['user'] != null) {
+                                  if (authVm.isNewUser) {
+                                    // New user → Profile Setup
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            const ProfileSetupScreen(),
+                                      ),
+                                    );
+                                  } else {
+                                    // Returning user → Contact Sync (or Main if already synced)
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            const ContactSyncScreen(),
+                                      ),
+                                    );
+                                  }
+                                } else if (authVm.hasError) {
+                                  Fluttertoast.showToast(
+                                    msg:
+                                        authVm.errorMessage ?? 'Sign in failed',
+                                  );
+                                }
+                              },
+                      ),
+
+                      12.height(),
+
+                      // Apple Sign In
+                      SocialButton(
+                        text: authVm.isLoading
+                            ? "Loading...".cap
+                            : "Continue with Apple".cap,
+                        icon: const Icon(
+                          Icons.apple,
+                          size: 32,
+                          color: Colors.white,
+                        ),
+
+                        onTap: authVm.isLoading
+                            ? null
+                            : () async {
+                                final result = await authVm.signInWithApple();
+
+                                if (result['user'] != null) {
+                                  if (authVm.isNewUser) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            const ProfileSetupScreen(),
+                                      ),
+                                    );
+                                  } else {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            const ContactSyncScreen(),
+                                      ),
+                                    );
+                                  }
+                                } else if (authVm.hasError) {
+                                  Fluttertoast.showToast(
+                                    msg:
+                                        authVm.errorMessage ?? 'Sign in failed',
+                                  );
+                                }
+                              },
+                      ),
+                    ],
                   );
                 },
               ),
 
-              20.height(),
+              30.height(),
 
+              // Terms & Privacy
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 35.0),
                 child: Text.rich(
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium!
-                    ..color?.darken(),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: Colors.white70),
                   TextSpan(
                     children: [
                       const TextSpan(text: "By continuing, you agree to our "),
                       TextSpan(
-                        text: "terms or service ".cap,
-                        style: TextStyle(
+                        text: "Terms of Service",
+                        style: const TextStyle(
                           decoration: TextDecoration.underline,
-                          decorationColor: Theme.of(
-                            context,
-                          ).textTheme.titleMedium!.color!.darken(),
+                          color: Colors.white,
                         ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            // Open terms URL
+                          },
                       ),
-                      const TextSpan(text: "and "),
+                      const TextSpan(text: " and "),
                       TextSpan(
-                        text: "privacy policy.".cap,
-                        style: TextStyle(
+                        text: "Privacy Policy.",
+                        style: const TextStyle(
                           decoration: TextDecoration.underline,
-                          decorationColor: Theme.of(
-                            context,
-                          ).textTheme.titleMedium!.color!.darken(),
+                          color: Colors.white,
                         ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            // Open privacy URL
+                          },
                       ),
                     ],
                   ),
                 ),
               ),
+
+              50.height(),
             ],
           ),
         ),

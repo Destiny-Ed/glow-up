@@ -1,9 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:glow_up/core/extensions.dart';
+import 'package:glow_up/providers/user_view_model.dart';
 import 'package:glow_up/screens/contacts/contact_sync.dart';
 import 'package:glow_up/widgets/custom_button.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'package:provider/provider.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
   const ProfileSetupScreen({super.key});
@@ -13,19 +15,25 @@ class ProfileSetupScreen extends StatefulWidget {
 }
 
 class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
-  File? _avatarImage;
-  final TextEditingController _usernameController = TextEditingController(
-    text: '@glowup_star',
-  );
-  final TextEditingController _phoneController = TextEditingController();
-  String _gender = 'Select your gender';
-  String _country = 'Where are you from?';
-  DateTime? _birthDate;
+  final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    // Load existing user data
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<UserViewModel>().loadUser();
+    });
+  }
 
   Future<void> _pickAvatar() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery);
-    if (picked != null) setState(() => _avatarImage = File(picked.path));
+    final picked = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+    );
+    if (picked != null) {
+      context.read<UserViewModel>().updateAvatar(File(picked.path));
+    }
   }
 
   @override
@@ -34,258 +42,266 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text('Profile Setup'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          'Profile Setup',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: SingleChildScrollView(
-          child: Column(
-            spacing: 10,
-            children: [
-              Text(
-                'Let\'s get you ready',
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
-              Text(
-                'Complete your profile to join the\nbattle arena.',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 10),
-
-              // Avatar
-              GestureDetector(
-                onTap: _pickAvatar,
-                child: Stack(
-                  alignment: Alignment.center,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Consumer<UserViewModel>(
+            builder: (context, userVm, child) {
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Theme.of(context).primaryColor,
-                          width: 3,
-                        ),
-                        image: _avatarImage != null
-                            ? DecorationImage(
-                                image: FileImage(_avatarImage!),
-                                fit: BoxFit.cover,
+                    Text(
+                      'Let\'s get you ready',
+                      style: Theme.of(context).textTheme.headlineLarge
+                          ?.copyWith(
+                            color: Colors.green,
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                          ),
+                      textAlign: TextAlign.center,
+                    ),
+                    12.height(),
+                    Text(
+                      'Complete your profile to join the battle arena.',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.titleLarge?.copyWith(color: Colors.white70),
+                      textAlign: TextAlign.center,
+                    ),
+                    40.height(),
+
+                    // Avatar
+                    GestureDetector(
+                      onTap: _pickAvatar,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Container(
+                            width: 120,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.green, width: 4),
+                              image: userVm.avatarImage != null
+                                  ? DecorationImage(
+                                      image: FileImage(userVm.avatarImage!),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : (userVm.user?.profilePictureUrl != null
+                                        ? DecorationImage(
+                                            image: NetworkImage(
+                                              userVm.user!.profilePictureUrl!,
+                                            ),
+                                            fit: BoxFit.cover,
+                                          )
+                                        : null),
+                            ),
+                            child:
+                                userVm.avatarImage == null &&
+                                    userVm.user?.profilePictureUrl == null
+                                ? const Icon(
+                                    Icons.camera_alt,
+                                    color: Colors.white54,
+                                    size: 50,
+                                  )
+                                : null,
+                          ),
+                          const Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: CircleAvatar(
+                              radius: 20,
+                              backgroundColor: Colors.green,
+                              child: const Icon(
+                                Icons.edit,
+                                color: Colors.black,
+                                size: 18,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    40.height(),
+
+                    // Username
+                    _buildLabel('Username'),
+                    TextFormField(
+                      initialValue: userVm.username,
+                      style: const TextStyle(color: Colors.white),
+                      onChanged: userVm.updateUsername,
+                      decoration: _inputDecoration(hintText: '@username'),
+                    ),
+                    20.height(),
+
+                    // Phone
+                    _buildLabel('Phone'),
+                    TextFormField(
+                      initialValue: userVm.phoneNumber,
+                      keyboardType: TextInputType.phone,
+                      style: const TextStyle(color: Colors.white),
+                      onChanged: userVm.updatePhone,
+                      decoration: _inputDecoration(
+                        hintText: '+1 (555) 123-4567',
+                      ),
+                    ),
+                    20.height(),
+
+                    // Gender
+                    _buildLabel('Gender'),
+                    DropdownButtonFormField<String>(
+                      value: userVm.gender,
+                      items:
+                          [
+                                'Select your gender',
+                                'Male',
+                                'Female',
+                                'Non-binary',
+                                'Prefer not to say',
+                              ]
+                              .map(
+                                (g) => DropdownMenuItem(
+                                  value: g,
+                                  child: Text(
+                                    g,
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                ),
                               )
-                            : null,
-                      ),
-                      child: _avatarImage == null
-                          ? Icon(
-                              Icons.camera_alt,
-                              color: Theme.of(context).cardColor,
-                              size: 30,
-                            )
-                          : null,
+                              .toList(),
+                      onChanged: (value) => userVm.updateGender,
+                      decoration: _inputDecoration(),
+                      dropdownColor: Colors.grey[900],
                     ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: CircleAvatar(
-                        radius: 15,
-                        backgroundColor: Theme.of(context).primaryColor,
-                        child: const Icon(Icons.edit, size: 15),
+                    20.height(),
+
+                    // Country
+                    _buildLabel('Country'),
+                    DropdownButtonFormField<String>(
+                      value: userVm.country,
+                      items:
+                          [
+                                'Where are you from?',
+                                'United States',
+                                'United Kingdom',
+                                'Canada',
+                                'Australia',
+                                'Other',
+                              ]
+                              .map(
+                                (c) => DropdownMenuItem(
+                                  value: c,
+                                  child: Text(
+                                    c,
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                      onChanged: (value) => userVm.updateCountry,
+                      decoration: _inputDecoration(),
+                      dropdownColor: Colors.grey[900],
+                    ),
+                    20.height(),
+
+                    // Date of Birth
+                    _buildLabel('Date of Birth'),
+                    TextFormField(
+                      readOnly: true,
+                      onTap: () async {
+                        final date = await showDatePicker(
+                          context: context,
+                          initialDate: userVm.birthDate ?? DateTime(2000),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now(),
+                        );
+                        if (date != null) userVm.updateBirthDate(date);
+                      },
+                      decoration: _inputDecoration(
+                        hintText: userVm.birthDate == null
+                            ? 'mm/dd/yyyy'
+                            : '${userVm.birthDate!.month.toString().padLeft(2, '0')}/${userVm.birthDate!.day.toString().padLeft(2, '0')}/${userVm.birthDate!.year}',
                       ),
                     ),
+                    8.height(),
+                    Text(
+                      'This won\'t be shown publicly.',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(color: Colors.white54),
+                    ),
+                    40.height(),
+
+                    // Continue Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: CustomButton(
+                        text: userVm.isLoading ? "Saving..." : "Continue",
+                        onTap: userVm.isLoading
+                            ? null
+                            : () async {
+                                final success = await userVm.saveProfile();
+                                if (success && mounted) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const ContactSyncScreen(),
+                                    ),
+                                  );
+                                }
+                              },
+                      ),
+                    ),
+                    30.height(),
                   ],
                 ),
-              ),
-              const SizedBox(height: 10),
-
-              // Username
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Username',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
-              TextFormField(
-                controller: _usernameController,
-                style: Theme.of(context).textTheme.titleMedium,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white10,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Phone',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
-              TextFormField(
-                controller: _phoneController,
-                style: Theme.of(context).textTheme.titleMedium,
-                keyboardType: TextInputType.phone,
-                decoration: InputDecoration(
-                  filled: true,
-                  hintText: "Enter phone number",
-                  fillColor: Colors.white10,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-
-              // Gender
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Gender',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
-              DropdownButtonFormField<String>(
-                value: _gender,
-                items:
-                    [
-                          'Select your gender',
-                          'Male',
-                          'Female',
-                          'Non-binary',
-                          'Prefer not to say',
-                        ]
-                        .map((g) => DropdownMenuItem(value: g, child: Text(g)))
-                        .toList(),
-                onChanged: (val) => setState(() => _gender = val!),
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white10,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-                dropdownColor: Colors.grey[900],
-              ),
-
-              // Country
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Country',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
-              DropdownButtonFormField<String>(
-                value: _country,
-                items:
-                    [
-                          'Where are you from?',
-                          'United States',
-                          'United Kingdom',
-                          'Canada',
-                          'Australia',
-                        ]
-                        .map((c) => DropdownMenuItem(value: c, child: Text(c)))
-                        .toList(),
-                onChanged: (val) => setState(() => _country = val!),
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white10,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-                dropdownColor: Colors.grey[900],
-              ),
-
-              // Date of Birth
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Date of Birth',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
-              TextField(
-                readOnly: true,
-                onTap: () async {
-                  final date = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime(2000),
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime.now(),
-                  );
-                  if (date != null) setState(() => _birthDate = date);
-                },
-                decoration: InputDecoration(
-                  hintText: _birthDate == null
-                      ? 'mm/dd/yyyy'
-                      : '${_birthDate!.month}/${_birthDate!.day}/${_birthDate!.year}',
-                  hintStyle: const TextStyle(color: Colors.white54),
-                  suffixIcon: const Icon(
-                    Icons.calendar_today,
-                    color: Colors.white54,
-                  ),
-                  filled: true,
-                  fillColor: Colors.white10,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 10),
-                child: Text(
-                  'This won\'t be shown publicly.',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
-
-              CustomButton(
-                text: "continue",
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const ContactSyncScreen(),
-                    ),
-                  );
-                },
-              ),
-              30.height(),
-            ],
+              );
+            },
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildLabel(String text) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        text,
+        style: Theme.of(
+          context,
+        ).textTheme.titleMedium?.copyWith(color: Colors.white),
+      ),
+    );
+  }
+
+  InputDecoration _inputDecoration({String? hintText}) {
+    return InputDecoration(
+      hintText: hintText,
+      hintStyle: const TextStyle(color: Colors.white54),
+      filled: true,
+      fillColor: Colors.white10,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: Colors.green, width: 2),
       ),
     );
   }

@@ -1,7 +1,13 @@
 // services/auth_service.dart
 
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:glow_up/firebase_options.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:glow_up/models/user_model.dart';
@@ -13,15 +19,25 @@ class AuthService {
 
   Future<Map<String, dynamic>> signInWithGoogle() async {
     try {
-      final GoogleSignInAccount googleUser = await _googleSignIn.authenticate();
-      if (googleUser.authentication.idToken == null) {
-        return {'user': null, 'isNewUser': false};
-      }
+      final String? clientId = Platform.isIOS
+          ? DefaultFirebaseOptions.ios.iosClientId
+          : DefaultFirebaseOptions.android.androidClientId;
+
+      // Initialize Google Sign-In
+      await _googleSignIn.initialize(clientId: clientId);
+
+      final GoogleSignInAccount googleUser = await _googleSignIn.authenticate(
+        scopeHint: ["email"],
+      );
 
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
 
+      if (googleAuth.idToken == null) {
+        return {'user': null, 'isNewUser': false};
+      }
+
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.idToken,
+        // accessToken: googleAuth.idToken,
         idToken: googleAuth.idToken,
       );
 
@@ -45,6 +61,8 @@ class AuthService {
 
   Future<Map<String, dynamic>> signInWithApple() async {
     try {
+      final rawNonce = _generateNonce();
+      final nonce = _sha256ofString(rawNonce);
       final credential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
@@ -54,6 +72,7 @@ class AuthService {
 
       final oauthCredential = OAuthProvider("apple.com").credential(
         idToken: credential.identityToken,
+        rawNonce: nonce,
         accessToken: credential.authorizationCode,
       );
 
@@ -73,6 +92,25 @@ class AuthService {
       print('Apple Sign-In Error: $e');
       return {'user': null, 'isNewUser': false};
     }
+  }
+
+  /// Generates a cryptographically secure random nonce, to be included in a
+  /// credential request.
+  String _generateNonce([int length = 32]) {
+    const charset =
+        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+    final random = Random.secure();
+    return List.generate(
+      length,
+      (_) => charset[random.nextInt(charset.length)],
+    ).join();
+  }
+
+  /// Returns the sha256 hash of [input] in hex notation.
+  String _sha256ofString(String input) {
+    final bytes = utf8.encode(input);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
   }
 
   Future<void> _createMinimalUserDocument(User firebaseUser) async {

@@ -1,5 +1,3 @@
-// viewmodels/auth_viewmodel.dart
-
 import 'package:glow_up/providers/base_view_model.dart';
 import 'package:glow_up/services/auth_service.dart';
 import 'package:glow_up/models/user_model.dart';
@@ -17,7 +15,7 @@ class AuthViewModel extends BaseViewModel {
   bool get isLoggedIn => _authService.isLoggedIn;
   bool get isNewUser => _isNewUser;
 
-  Future<void> signInWithGoogle() async {
+  Future<Map<String, dynamic>> signInWithGoogle() async {
     setLoading(true);
     clearError();
 
@@ -34,9 +32,10 @@ class AuthViewModel extends BaseViewModel {
     }
 
     setLoading(false);
+    return result;
   }
 
-  Future<void> signInWithApple() async {
+  Future<Map<String, dynamic>> signInWithApple() async {
     setLoading(true);
     clearError();
 
@@ -52,6 +51,7 @@ class AuthViewModel extends BaseViewModel {
     }
 
     setLoading(false);
+    return result;
   }
 
   Future<void> loadCurrentUser() async {

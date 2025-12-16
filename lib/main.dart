@@ -7,6 +7,7 @@ import 'package:glow_up/providers/battle_viewmodel.dart';
 import 'package:glow_up/providers/contact_viewmodel.dart';
 import 'package:glow_up/providers/leaderboard_viewmodel.dart';
 import 'package:glow_up/providers/notification_vm.dart';
+import 'package:glow_up/providers/post_vm.dart';
 import 'package:glow_up/providers/profile_vm.dart';
 import 'package:glow_up/providers/settings.dart';
 import 'package:glow_up/providers/user_view_model.dart';
@@ -40,6 +41,7 @@ class GlowUpApp extends StatelessWidget {
         // Competition
         ChangeNotifierProvider(create: (_) => BattleViewModel()),
         ChangeNotifierProvider(create: (_) => LeaderboardViewModel()),
+        ChangeNotifierProvider(create: (_) => PostViewModel()),
 
         // Feedback
         ChangeNotifierProvider(create: (_) => NotificationViewModel()),

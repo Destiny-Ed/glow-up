@@ -1,7 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:glow_up/core/extensions.dart';
 import 'package:glow_up/main_activity/main_activity.dart';
+import 'package:glow_up/providers/post_vm.dart';
+import 'package:glow_up/services/storage_service.dart';
 import 'package:glow_up/widgets/custom_button.dart';
+import 'package:provider/provider.dart';
 
 class PreviewFitScreen extends StatefulWidget {
   final File imageFile;
@@ -15,6 +20,42 @@ class _PreviewFitScreenState extends State<PreviewFitScreen> {
   final TextEditingController _tagsController = TextEditingController();
 
   @override
+  void dispose() {
+    _tagsController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _postFit() async {
+    final postVm = context.read<PostViewModel>();
+
+    // Extract hashtags
+    final String tagsText = _tagsController.text.trim();
+    final List<String> hashtags = tagsText
+        .split(RegExp(r'\s+'))
+        .where((tag) => tag.startsWith('#'))
+        .map((tag) => tag.toLowerCase())
+        .toList();
+
+    final success = await postVm.uploadTodayPost(
+      image: widget.imageFile,
+      caption: _tagsController.text.isEmpty ? null : _tagsController.text,
+      hashtags: hashtags,
+    );
+
+    if (!mounted) return;
+
+    if (success) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const MainActivityScreen()),
+        (route) => false,
+      );
+    } else {
+      Fluttertoast.showToast(msg: postVm.errorMessage ?? 'Failed to post fit');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -23,50 +64,57 @@ class _PreviewFitScreenState extends State<PreviewFitScreen> {
         title: const Text('Preview Fit'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
+            // Image Preview
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(30),
-                  child: Image.file(widget.imageFile, fit: BoxFit.cover),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(30),
+                child: Image.file(
+                  widget.imageFile,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
                 ),
               ),
             ),
 
+            30.height(),
+
             // Ready Badge
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: 40),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(30),
               ),
               child: Row(
-                spacing: 8,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
                     Icons.check_circle,
                     color: Theme.of(context).primaryColor,
                   ),
+                  10.width(),
                   Text(
                     'Ready to battle',
-                    style: TextStyle(color: Theme.of(context).primaryColor),
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 30),
+
+            40.height(),
 
             // Tags Field
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: TextField(
                 controller: _tagsController,
-                style: Theme.of(context).textTheme.titleMedium,
+                style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   hintText: 'Add title or tags (optional)...',
                   hintStyle: const TextStyle(color: Colors.white54),
@@ -81,35 +129,43 @@ class _PreviewFitScreenState extends State<PreviewFitScreen> {
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide.none,
                   ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: const BorderSide(color: Colors.green, width: 2),
+                  ),
                   suffixText: 'e.g. #Streetwear #DateNight',
                   suffixStyle: const TextStyle(color: Colors.white54),
                 ),
               ),
             ),
-            const SizedBox(height: 40),
+
+            50.height(),
 
             // Post Button
-            CustomButton(
-              text: "post fit".toUpperCase(),
-              onTap: () {
-                // Upload post logic
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (_) => const MainActivityScreen()),
-                  (route) => false,
+            Consumer<PostViewModel>(
+              builder: (context, postVm, child) {
+                return SizedBox(
+                  width: double.infinity,
+                  child: CustomButton(
+                    text: postVm.isLoading ? "POSTING..." : "POST FIT >",
+                    onTap: postVm.isLoading ? null : _postFit,
+                  ),
                 );
               },
             ),
+
+            20.height(),
 
             // Retake
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: const Text(
                 'Retake Photo',
-                style: TextStyle(color: Colors.white70),
+                style: TextStyle(color: Colors.white70, fontSize: 16),
               ),
             ),
-            const SizedBox(height: 20),
+
+            30.height(),
           ],
         ),
       ),

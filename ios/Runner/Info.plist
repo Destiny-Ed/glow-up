@@ -60,6 +60,21 @@
 
 	<key>NSMicrophoneUsageDescription</key>
 	<string>GlowUp needs microphone access to record sound when capturing video outfits for battles.</string>
+
+	<key>GIDClientID</key>
+	<string>93874100060-s8f65kgcfnu13sv65uupel5bt4kb373m.apps.googleusercontent.com</string>
+
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.93874100060-s8f65kgcfnu13sv65uupel5bt4kb373m</string>
+			</array>
+		</dict>
+	</array>
 	
 </dict>
 </plist>

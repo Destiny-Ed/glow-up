@@ -1,8 +1,11 @@
 // viewmodels/post_viewmodel.dart
 
+import 'dart:io';
+
 import 'package:glow_up/models/post_model.dart';
 import 'package:glow_up/providers/base_view_model.dart';
 import 'package:glow_up/services/post_service.dart';
+import 'package:glow_up/services/storage_service.dart';
 
 class PostViewModel extends BaseViewModel {
   late PostService _postService;
@@ -72,7 +75,7 @@ class PostViewModel extends BaseViewModel {
 
   /// Upload a new daily post
   Future<bool> uploadTodayPost({
-    required String imageUrl,
+    required File image,
     String? caption,
     List<String> hashtags = const [],
     String? challenge,
@@ -84,6 +87,8 @@ class PostViewModel extends BaseViewModel {
 
     setLoading(true);
     try {
+      final String imageUrl = await StorageService().uploadPostImage(image);
+
       final newPost = PostModel(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         userId: _postService.currentUid,
