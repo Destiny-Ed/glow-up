@@ -1,6 +1,8 @@
-// lib/screens/create_battle_screen.dart
-
 import 'package:flutter/material.dart';
+import 'package:glow_up/core/extensions.dart';
+import 'package:glow_up/providers/battle_viewmodel.dart';
+import 'package:glow_up/providers/user_view_model.dart';
+import 'package:provider/provider.dart';
 
 class CreateBattleScreen extends StatefulWidget {
   const CreateBattleScreen({super.key});
@@ -13,8 +15,8 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
   final TextEditingController _customThemeController = TextEditingController();
   final TextEditingController _captionController = TextEditingController();
 
-  String _selectedDuration = '24h'; // 24h, 48h, until_all
-  final List<Map<String, dynamic>> _selectedOpponents = [];
+  String _selectedDuration = '24h';
+  final List<String> _selectedOpponents = [];
   final List<String> _trendingThemes = [
     'Streetwear',
     'Vintage',
@@ -25,34 +27,16 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
     'Festival Look',
   ];
 
-  // Dummy friends list for selection
-  final List<Map<String, dynamic>> _friends = [
-    {
-      'name': 'Sarah',
-      'username': '@sarah_k',
-      'avatar': 'https://via.placeholder.com/80',
-    },
-    {
-      'name': 'Elena',
-      'username': '@elena_style',
-      'avatar': 'https://via.placeholder.com/80',
-    },
-    {
-      'name': 'Jordan',
-      'username': '@j_smith99',
-      'avatar': 'https://via.placeholder.com/80',
-    },
-    {
-      'name': 'Mike',
-      'username': '@mike_drips',
-      'avatar': 'https://via.placeholder.com/80',
-    },
-    {
-      'name': 'Marcus',
-      'username': '@mchen_designs',
-      'avatar': 'https://via.placeholder.com/80',
-    },
-  ];
+  Duration get _duration {
+    switch (_selectedDuration) {
+      case '48h':
+        return const Duration(hours: 48);
+      case 'Until all post':
+        return const Duration(days: 30); // Long duration
+      default:
+        return const Duration(hours: 24);
+    }
+  }
 
   @override
   void dispose() {
@@ -61,25 +45,21 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
     super.dispose();
   }
 
-  void _addOpponent(Map<String, dynamic> friend) {
-    if (_selectedOpponents.length < 5 &&
-        !_selectedOpponents.any((e) => e['username'] == friend['username'])) {
-      setState(() => _selectedOpponents.add(friend));
-    }
-  }
-
-  void _removeOpponent(String username) {
-    setState(
-      () => _selectedOpponents.removeWhere((e) => e['username'] == username),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final bool canSend =
-        _selectedOpponents.isNotEmpty &&
-        (_customThemeController.text.isNotEmpty ||
-            _trendingThemes.contains(_customThemeController.text));
+    final userVm = context.read<UserViewModel>();
+    final battleVm = context.read<BattleViewModel>();
+
+    final friends = userVm.user?.friendUids ?? [];
+
+    final theme = _customThemeController.text.isNotEmpty
+        ? _customThemeController.text
+        : _trendingThemes.firstWhere(
+            (t) => t.toLowerCase() == _customThemeController.text.toLowerCase(),
+            orElse: () => _customThemeController.text,
+          );
+
+    final canSend = _selectedOpponents.isNotEmpty && theme.isNotEmpty;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -116,7 +96,7 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 16),
+            16.height(),
 
             // Trending Themes
             SingleChildScrollView(
@@ -129,7 +109,7 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
                       vertical: 10,
                     ),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
+                      color: Colors.green,
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Row(
@@ -146,32 +126,29 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  ..._trendingThemes.map(
-                    (theme) => Padding(
+                  12.width(),
+                  ..._trendingThemes.map((theme) {
+                    final selected = _customThemeController.text == theme;
+                    return Padding(
                       padding: const EdgeInsets.only(right: 12),
                       child: ChoiceChip(
                         label: Text(theme),
-                        selected: _customThemeController.text == theme,
+                        selected: selected,
                         onSelected: (_) =>
                             setState(() => _customThemeController.text = theme),
                         backgroundColor: Colors.white10,
-                        selectedColor: Theme.of(
-                          context,
-                        ).primaryColor.withOpacity(0.3),
+                        selectedColor: Colors.green.withOpacity(0.3),
                         labelStyle: TextStyle(
-                          color: _customThemeController.text == theme
-                              ? Theme.of(context).primaryColor
-                              : Colors.white,
+                          color: selected ? Colors.green : Colors.white,
                         ),
                       ),
-                    ),
-                  ),
+                    );
+                  }),
                 ],
               ),
             ),
 
-            const SizedBox(height: 20),
+            20.height(),
 
             // Custom Theme Field
             TextField(
@@ -191,7 +168,7 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
               onChanged: (_) => setState(() {}),
             ),
 
-            const SizedBox(height: 32),
+            32.height(),
 
             // Select Opponents
             Row(
@@ -211,7 +188,7 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            16.height(),
 
             // Selected Opponents Horizontal Scroll
             SizedBox(
@@ -222,25 +199,13 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
                 itemBuilder: (context, index) {
                   if (index == _selectedOpponents.length) {
                     return GestureDetector(
-                      onTap: () {
-                        // Show friend picker bottom sheet
-                        showModalBottomSheet(
-                          context: context,
-                          backgroundColor: Colors.grey[900],
-                          builder: (_) => _buildFriendPicker(),
-                        );
-                      },
+                      onTap: () => _showFriendPicker(context, friends),
                       child: Container(
                         width: 80,
                         margin: const EdgeInsets.only(right: 12),
                         decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.white30,
-                            width: 2,
-                            style: BorderStyle.solid,
-                          ),
+                          border: Border.all(color: Colors.white30, width: 2),
                           borderRadius: BorderRadius.circular(40),
-                          color: Colors.transparent,
                         ),
                         child: const Center(
                           child: Text(
@@ -256,7 +221,7 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
                     );
                   }
 
-                  final opponent = _selectedOpponents[index];
+                  final opponentUid = _selectedOpponents[index];
                   return Stack(
                     children: [
                       Container(
@@ -266,11 +231,13 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
                           children: [
                             CircleAvatar(
                               radius: 36,
-                              backgroundImage: NetworkImage(opponent['avatar']),
+                              backgroundImage: NetworkImage(
+                                'https://i.pravatar.cc/150?u=$opponentUid',
+                              ),
                             ),
-                            const SizedBox(height: 6),
+                            6.height(),
                             Text(
-                              opponent['name'],
+                              'Friend',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 13,
@@ -283,7 +250,9 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
                         top: 0,
                         right: 8,
                         child: GestureDetector(
-                          onTap: () => _removeOpponent(opponent['username']),
+                          onTap: () => setState(
+                            () => _selectedOpponents.remove(opponentUid),
+                          ),
                           child: const CircleAvatar(
                             radius: 12,
                             backgroundColor: Colors.white,
@@ -301,7 +270,7 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
               ),
             ),
 
-            const SizedBox(height: 32),
+            32.height(),
 
             // Duration
             const Text(
@@ -312,18 +281,21 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 16),
+            16.height(),
             Row(
               children: [
-                _durationChip('24h', true),
-                const SizedBox(width: 12),
-                _durationChip('48h', false),
-                const SizedBox(width: 12),
-                _durationChip('Until all post', false),
+                _durationChip('24h', _selectedDuration == '24h'),
+                12.width(),
+                _durationChip('48h', _selectedDuration == '48h'),
+                12.width(),
+                _durationChip(
+                  'Until all post',
+                  _selectedDuration == 'Until all post',
+                ),
               ],
             ),
 
-            const SizedBox(height: 32),
+            32.height(),
 
             // Caption
             const Text(
@@ -334,7 +306,7 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 12),
+            12.height(),
             TextField(
               controller: _captionController,
               maxLength: 140,
@@ -349,7 +321,6 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
                 ),
-                counterText: '${_captionController.text.length}/140',
                 counterStyle: const TextStyle(color: Colors.white54),
               ),
             ),
@@ -360,36 +331,109 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: canSend
-                    ? () {
-                        // Send battle
-                        Navigator.pop(context);
+                onPressed: canSend && !battleVm.isLoading
+                    ? () async {
+                        await battleVm.createBattle(
+                          theme: theme,
+                          caption: _captionController.text.isEmpty
+                              ? null
+                              : _captionController.text,
+                          duration: _duration,
+                          opponentUids: _selectedOpponents,
+                        );
+
+                        if (!mounted) return;
+
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Challenge sent! 🔥')),
                         );
+
+                        Navigator.pop(context);
                       }
                     : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: canSend
-                      ? Theme.of(context).primaryColor
-                      : Colors.grey[800],
+                  backgroundColor: canSend ? Colors.green : Colors.grey[800],
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                   elevation: canSend ? 10 : 0,
-                  shadowColor: canSend
-                      ? Theme.of(context).primaryColor.withOpacity(0.5)
-                      : null,
                 ),
-                child: Text(
-                  'Send Challenge >',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: canSend ? Colors.black : Colors.white54,
-                  ),
-                ),
+                child: battleVm.isLoading
+                    ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          color: Colors.black,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Text(
+                        'Send Challenge >',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showFriendPicker(BuildContext context, List<String> friendUids) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.grey[900],
+      builder: (_) => Container(
+        height: 400,
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            const Text(
+              'Add Opponent',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Divider(color: Colors.white30),
+            Expanded(
+              child: ListView.builder(
+                itemCount: friendUids.length,
+                itemBuilder: (context, index) {
+                  final uid = friendUids[index];
+                  final isSelected = _selectedOpponents.contains(uid);
+
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: NetworkImage(
+                        'https://i.pravatar.cc/150?u=$uid',
+                      ),
+                    ),
+                    title: Text(
+                      'Friend $uid',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    trailing: isSelected
+                        ? const Icon(Icons.check, color: Colors.green)
+                        : null,
+                    onTap: () {
+                      setState(() {
+                        if (isSelected) {
+                          _selectedOpponents.remove(uid);
+                        } else if (_selectedOpponents.length < 5) {
+                          _selectedOpponents.add(uid);
+                        }
+                      });
+                      Navigator.pop(context);
+                    },
+                  );
+                },
               ),
             ),
           ],
@@ -404,7 +448,7 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
-          color: selected ? Theme.of(context).primaryColor : Colors.white10,
+          color: selected ? Colors.green : Colors.white10,
           borderRadius: BorderRadius.circular(30),
         ),
         child: Text(
@@ -414,60 +458,6 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildFriendPicker() {
-    return Container(
-      height: 400,
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          const Text(
-            'Add Opponent',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const Divider(color: Colors.white30),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _friends.length,
-              itemBuilder: (context, index) {
-                final friend = _friends[index];
-                final isSelected = _selectedOpponents.any(
-                  (e) => e['username'] == friend['username'],
-                );
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(friend['avatar']),
-                  ),
-                  title: Text(
-                    friend['name'],
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  subtitle: Text(
-                    friend['username'],
-                    style: const TextStyle(color: Colors.white70),
-                  ),
-                  trailing: isSelected
-                      ?   Icon(
-                          Icons.check,
-                          color: Theme.of(context).primaryColor,
-                        )
-                      : null,
-                  onTap: () {
-                    _addOpponent(friend);
-                    Navigator.pop(context);
-                  },
-                );
-              },
-            ),
-          ),
-        ],
       ),
     );
   }

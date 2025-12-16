@@ -53,7 +53,7 @@ class GlowUpApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
-            themeMode: settingVm.isLightTheme
+            themeMode: !settingVm.isLightTheme
                 ? ThemeMode.light
                 : ThemeMode.dark,
             home: const SplashScreen(),
