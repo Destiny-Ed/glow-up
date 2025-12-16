@@ -35,7 +35,7 @@ class _ContactSyncScreenState extends State<ContactSyncScreen> {
         // Build avatar list from real found users
         final List<CachedNetworkImageProvider> avatars = foundUsers.isEmpty
             ? List.generate(
-                15,
+                0,
                 (i) => const CachedNetworkImageProvider(
                   'https://i.pravatar.cc/150',
                 ),

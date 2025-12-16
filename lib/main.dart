@@ -29,9 +29,20 @@ class GlowUpApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthViewModel()),
         ChangeNotifierProvider(create: (_) => SettingsProvider()),
-        ChangeNotifierProvider(create: (_) => LeaderboardViewModel()),
+
+        // User & Profile
+        ChangeNotifierProvider(create: (_) => UserViewModel()),
+        ChangeNotifierProvider(create: (_) => ProfileViewModel()),
+
+        // Social & Discovery
         ChangeNotifierProvider(create: (_) => ContactViewModel()),
-        // Only global providers here — NO UID-dependent ones
+
+        // Competition
+        ChangeNotifierProvider(create: (_) => BattleViewModel()),
+        ChangeNotifierProvider(create: (_) => LeaderboardViewModel()),
+
+        // Feedback
+        ChangeNotifierProvider(create: (_) => NotificationViewModel()),
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settingVm, _) {
