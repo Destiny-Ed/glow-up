@@ -1,0 +1,41 @@
+// widgets/empty_feed_widget.dart
+
+import 'package:flutter/material.dart';
+import 'package:glow_up/core/extensions.dart';
+
+Widget emptyWidget(BuildContext context, String title, String subtitle) {
+  return Center(
+    child: Padding(
+      padding: const EdgeInsets.all(40),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.photo_camera_front, size: 80, color: Colors.white24),
+          30.height(),
+          Text(
+            title.capitalize,
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          16.height(),
+          Text(
+            subtitle.capitalize,
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(color: Colors.white70),
+            textAlign: TextAlign.center,
+          ),
+          40.height(),
+          Icon(
+            Icons.whatshot,
+            size: 60,
+            color: Theme.of(context).primaryColor.withOpacity(0.5),
+          ),
+        ],
+      ),
+    ),
+  );
+}

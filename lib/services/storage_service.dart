@@ -19,4 +19,13 @@ class StorageService {
     await ref.putFile(image);
     return await ref.getDownloadURL();
   }
+
+  //getProfilePhotoAsFile
+  Future<File> getProfilePhotoAsFile(String url) async {
+    final ref = _storage.refFromURL(url);
+    final tempDir = Directory.systemTemp;
+    final tempFile = File('${tempDir.path}/${ref.name}');
+    await ref.writeToFile(tempFile);
+    return tempFile;
+  }
 }

@@ -28,7 +28,7 @@ class _CameraScreenState extends State<CameraScreen> {
     final cameras = await availableCameras();
     // Use front camera (index 1 usually)
     final frontCamera = cameras.firstWhere(
-      (camera) => camera.lensDirection == CameraLensDirection.front,
+      (camera) => camera.lensDirection == CameraLensDirection.back,
       orElse: () => cameras.first,
     );
     _controller = CameraController(frontCamera, ResolutionPreset.high);
@@ -77,7 +77,15 @@ class _CameraScreenState extends State<CameraScreen> {
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: ImageSource.gallery);
     if (picked != null) {
-      setState(() => _pickedImage = picked);
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                PreviewFitScreen(imageFile: File(picked.path)),
+          ),
+        );
+      }
     }
   }
 
@@ -93,23 +101,8 @@ class _CameraScreenState extends State<CameraScreen> {
         setState(() {});
       }
 
-      // final uid = AuthService().currentUser?.uid ?? '';
-      // if (uid.isEmpty) {
-      //   Fluttertoast.showToast(msg: 'Please sign in first');
-      //   return;
-      // }
-
-      // final photoUrl = await StorageService().uploadPhoto(imageFile, "uid");
-      // await DatabaseService(uid: uid).postDailyPhoto(photoUrl);
-
-      Fluttertoast.showToast(msg: 'Today\'s fit posted! 🔥');
-
       // Navigate to home or next screen
       if (mounted) {
-        // Navigator.pushReplacementNamed(
-        //   context,
-        //   '/home',
-        // ); // Adjust route as needed
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -191,10 +184,10 @@ class _CameraScreenState extends State<CameraScreen> {
           //     children: const [
           //       Row(
           //         children: [
-          //           Icon(Icons.whatshot, color: Colors.green),
+          //           Icon(Icons.whatshot, color: Theme.of(context).primaryColor),
           //           Text(
           //             ' FIRST POST REQUIRED TO JOIN',
-          //             style: TextStyle(color: Colors.green),
+          //             style: TextStyle(color: Theme.of(context).primaryColor),
           //           ),
           //         ],
           //       ),

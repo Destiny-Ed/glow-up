@@ -4,7 +4,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:glow_up/core/extensions.dart';
 import 'package:glow_up/main_activity/main_activity.dart';
 import 'package:glow_up/providers/post_vm.dart';
-import 'package:glow_up/services/storage_service.dart';
 import 'package:glow_up/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 
@@ -45,6 +44,8 @@ class _PreviewFitScreenState extends State<PreviewFitScreen> {
     if (!mounted) return;
 
     if (success) {
+      Fluttertoast.showToast(msg: 'Today\'s fit posted! 🔥');
+
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (_) => const MainActivityScreen()),
@@ -69,12 +70,15 @@ class _PreviewFitScreenState extends State<PreviewFitScreen> {
           children: [
             // Image Preview
             Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(30),
-                child: Image.file(
-                  widget.imageFile,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: Image.file(
+                    widget.imageFile,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                  ),
                 ),
               ),
             ),
@@ -107,7 +111,7 @@ class _PreviewFitScreenState extends State<PreviewFitScreen> {
               ),
             ),
 
-            40.height(),
+            20.height(),
 
             // Tags Field
             Padding(
@@ -131,15 +135,18 @@ class _PreviewFitScreenState extends State<PreviewFitScreen> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
-                    borderSide: const BorderSide(color: Colors.green, width: 2),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).primaryColor,
+                      width: 2,
+                    ),
                   ),
-                  suffixText: 'e.g. #Streetwear #DateNight',
+                  // suffixText: 'e.g. #Streetwear #DateNight',
                   suffixStyle: const TextStyle(color: Colors.white54),
                 ),
               ),
             ),
 
-            50.height(),
+            20.height(),
 
             // Post Button
             Consumer<PostViewModel>(
@@ -147,6 +154,9 @@ class _PreviewFitScreenState extends State<PreviewFitScreen> {
                 return SizedBox(
                   width: double.infinity,
                   child: CustomButton(
+                    bgColor: postVm.isLoading
+                        ? Colors.grey
+                        : Theme.of(context).primaryColor,
                     text: postVm.isLoading ? "POSTING..." : "POST FIT >",
                     onTap: postVm.isLoading ? null : _postFit,
                   ),
@@ -154,7 +164,7 @@ class _PreviewFitScreenState extends State<PreviewFitScreen> {
               },
             ),
 
-            20.height(),
+            10.height(),
 
             // Retake
             TextButton(
@@ -165,7 +175,7 @@ class _PreviewFitScreenState extends State<PreviewFitScreen> {
               ),
             ),
 
-            30.height(),
+            20.height(),
           ],
         ),
       ),

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class BaseViewModel extends ChangeNotifier {
@@ -11,16 +10,22 @@ class BaseViewModel extends ChangeNotifier {
 
   void setLoading(bool loading) {
     _isLoading = loading;
-    notifyListeners();
+    _update();
   }
 
   void setError(String? message) {
     _errorMessage = message;
-    notifyListeners();
+    _update();
   }
 
   void clearError() {
     _errorMessage = null;
-    notifyListeners();
+    _update();
+  }
+
+  void _update() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 }

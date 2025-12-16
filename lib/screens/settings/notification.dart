@@ -47,10 +47,10 @@ class _ActivityScreenState extends State<ActivityScreen> {
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               children: [
-                const Text(
+                  Text(
                   'New',
                   style: TextStyle(
-                    color: Colors.green,
+                    color: Theme.of(context).primaryColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -62,7 +62,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                   actionButton: ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: Theme.of(context).primaryColor,
                     ),
                     child: const Text('Accept'),
                   ),
@@ -136,7 +136,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
-          color: active ? Colors.green : Colors.white10,
+          color: active ? Theme.of(context).primaryColor : Colors.white10,
           borderRadius: BorderRadius.circular(30),
         ),
         child: Text(
@@ -212,7 +212,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
               top: 0,
               child: CircleAvatar(
                 radius: 10,
-                backgroundColor: Colors.green,
+                backgroundColor: Theme.of(context).primaryColor,
                 child: const Text('2', style: TextStyle(fontSize: 10)),
               ),
             ),

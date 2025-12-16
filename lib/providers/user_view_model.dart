@@ -1,6 +1,8 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:glow_up/providers/base_view_model.dart';
+import 'package:glow_up/services/storage_service.dart';
 import 'package:glow_up/services/user_service.dart';
 import 'package:glow_up/models/user_model.dart';
 
@@ -13,11 +15,14 @@ class UserViewModel extends BaseViewModel {
   bool get isProfileComplete => _user?.isProfileComplete ?? false;
 
   File? _avatarImage;
-  String _username = '@glowup_star';
+  String _username = 'username';
   String _phoneNumber = '';
   String _gender = 'Select your gender';
   String _country = 'Where are you from?';
   DateTime? _birthDate;
+  bool _isCheckingUsername = false;
+  bool _isUsernameAvailable = true;
+  String? _usernameError;
 
   // Getters
   File? get avatarImage => _avatarImage;
@@ -26,6 +31,10 @@ class UserViewModel extends BaseViewModel {
   String get gender => _gender;
   String get country => _country;
   DateTime? get birthDate => _birthDate;
+
+  bool get isCheckingUsername => _isCheckingUsername;
+  bool get isUsernameAvailable => _isUsernameAvailable;
+  String? get usernameError => _usernameError;
 
   void initialize(String userUid) {
     uid = userUid;
@@ -56,32 +65,52 @@ class UserViewModel extends BaseViewModel {
   // Local updates (for form)
   void updateAvatar(File? image) {
     _avatarImage = image;
-    notifyListeners();
+    setLoading(false);
   }
 
   void updateUsername(String value) {
     _username = value;
-    notifyListeners();
+    setLoading(false);
   }
 
   void updatePhone(String value) {
     _phoneNumber = value;
-    notifyListeners();
+    setLoading(false);
   }
 
   void updateGender(String value) {
     _gender = value;
-    notifyListeners();
+    setLoading(false);
   }
 
   void updateCountry(String value) {
     _country = value;
-    notifyListeners();
+    setLoading(false);
   }
 
   void updateBirthDate(DateTime? date) {
     _birthDate = date;
-    notifyListeners();
+    setLoading(false);
+  }
+
+  Future<void> checkUsername(String username) async {
+    if (username.isEmpty || username.length < 3) {
+      _isUsernameAvailable = false;
+      _usernameError = 'Username must be 2+ characters';
+      setLoading(false);
+
+      return;
+    }
+
+    _isCheckingUsername = true;
+    setLoading(false);
+
+    final available = await _userService.isUsernameAvailable(username);
+
+    _isUsernameAvailable = available;
+    _usernameError = available ? null : 'Username already taken';
+    _isCheckingUsername = false;
+    setLoading(false);
   }
 
   // Save full profile
@@ -91,28 +120,35 @@ class UserViewModel extends BaseViewModel {
       return false;
     }
 
+    if (!await _userService.isUsernameAvailable(_username)) {
+      setError('Username taken');
+      return false;
+    }
+
     setLoading(true);
     try {
       // Normalize phone
-      final normalizedPhone = _normalizePhone(_phoneNumber);
-      if (normalizedPhone == null) {
-        setError('Invalid phone number');
-        setLoading(false);
-        return false;
-      }
+      // final normalizedPhone = _normalizePhone(_phoneNumber);
+      // if (normalizedPhone == null) {
+      //   setError('Invalid phone number');
+      //   setLoading(false);
+      //   return false;
+      // }
 
       // Upload avatar if changed (implement in StorageService)
-      // String? avatarUrl = _avatarImage != null ? await StorageService().uploadAvatar(_avatarImage!) : _user?.profilePictureUrl;
+      final String? avatarUrl = _avatarImage != null
+          ? await StorageService().uploadProfilePhoto(_avatarImage!, uid)
+          : _user?.profilePictureUrl;
 
       final updatedUser = UserModel(
         id: _user?.id ?? '',
         name: _username.replaceFirst('@', ''),
         userName: _username,
-        phoneNumber: normalizedPhone,
+        phoneNumber: _phoneNumber,
         gender: _gender != 'Select your gender' ? _gender : null,
         location: _country != 'Where are you from?' ? _country : null,
         dob: _birthDate,
-        profilePictureUrl: _user?.profilePictureUrl, // + avatarUrl if uploaded
+        profilePictureUrl: avatarUrl,
         email: _user?.email,
         dateCreated: _user?.dateCreated ?? DateTime.now(),
         lastActiveDate: DateTime.now(),
@@ -120,6 +156,7 @@ class UserViewModel extends BaseViewModel {
         votes: _user?.votes ?? 0,
         battles: _user?.battles ?? 0,
         winDates: _user?.winDates ?? [],
+        platform: Platform.operatingSystem,
         isProfilePrivate: _user?.isProfilePrivate ?? false,
         friendUids: _user?.friendUids ?? [],
         pendingRequestUids: _user?.pendingRequestUids ?? [],
@@ -128,6 +165,8 @@ class UserViewModel extends BaseViewModel {
       );
 
       await _userService.updateProfile(updatedUser);
+      // Reserve
+      await _userService.reserveUsername(username, uid);
       _user = updatedUser;
 
       clearError();
@@ -141,21 +180,26 @@ class UserViewModel extends BaseViewModel {
   }
 
   bool isFormValid() {
+    print(_username);
+    print(_phoneNumber);
+    print(_gender);
+    print(_country);
+    print(_birthDate);
     return _username.isNotEmpty &&
-        _username.startsWith('@') &&
+        _username.length > 2 &&
         _phoneNumber.isNotEmpty &&
         _gender != 'Select your gender' &&
         _country != 'Where are you from?' &&
         _birthDate != null;
   }
 
-  String? _normalizePhone(String raw) {
-    final cleaned = raw.replaceAll(RegExp(r'\D'), '');
-    if (cleaned.length == 10) return '+1$cleaned';
-    if (cleaned.length == 11 && cleaned.startsWith('1')) return '+$cleaned';
-    if (cleaned.startsWith('+')) return cleaned;
-    return null;
-  }
+  // String? _normalizePhone(String raw) {
+  //   final cleaned = raw.replaceAll(RegExp(r'\D'), '');
+  //   if (cleaned.length == 10) return '+1$cleaned';
+  //   if (cleaned.length == 11 && cleaned.startsWith('1')) return '+$cleaned';
+  //   if (cleaned.startsWith('+')) return cleaned;
+  //   return null;
+  // }
 
   Future<void> updateProfile(UserModel updatedUser) async {
     setLoading(true);

@@ -14,6 +14,19 @@ extension IntSizedBoxExtension on num {
   }
 }
 
+extension DateTimeExtension on DateTime {
+  String timeAgo() {
+    final now = DateTime.now();
+    final difference = now.difference(this);
+
+    if (difference.inMinutes < 1) return 'just now';
+    if (difference.inMinutes < 60) return '${difference.inMinutes}m ago';
+    if (difference.inHours < 24) return '${difference.inHours}h ago';
+    if (difference.inDays < 7) return '${difference.inDays}d ago';
+    return '${difference.inDays ~/ 7}w ago';
+  }
+}
+
 extension StringExtension on String {
   //to capitalize first letter of the string/sentence.
   String get capitalize =>

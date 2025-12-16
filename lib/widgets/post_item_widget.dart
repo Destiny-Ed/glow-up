@@ -1,187 +1,215 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:glow_up/core/extensions.dart';
+import 'package:glow_up/models/post_model.dart';
+import 'package:glow_up/models/user_model.dart';
+import 'package:glow_up/providers/post_vm.dart';
+import 'package:provider/provider.dart';
 
 Widget buildPostItem(
   BuildContext context,
-  Map<String, dynamic> post,
+  PostModel post,
   int index,
   PageController pageController,
 ) {
-  final hasPosted = (post['hasPosted'] ?? false) as bool;
-  return Stack(
-    fit: StackFit.expand,
-    children: [
-      hasPosted
-          ? CachedNetworkImage(imageUrl: post['photoUrl'], fit: BoxFit.cover)
-          : Container(
-              color: Colors.white10,
-              child: const Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
+  final postVm = context.read<PostViewModel>();
+
+  final currentUid = postVm.uid;
+
+  return FutureBuilder<UserModel>(
+    future: postVm.getUserForPost(post.userId),
+    builder: (context, snapshot) {
+      final user = snapshot.data;
+
+      final hasPosted = post.hasPosted;
+
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          hasPosted
+              ? CachedNetworkImage(
+                  imageUrl: post.imageUrl,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) =>
+                      Container(color: Colors.black26),
+                )
+              : Container(
+                  color: Colors.white10,
+                  child: const Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.pending, color: Colors.white54, size: 40),
+                        Text(
+                          'Not posted yet',
+                          style: TextStyle(color: Colors.white54),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+          // Dark Overlay
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.transparent, Colors.black54],
+              ),
+            ),
+          ),
+
+          // Challenge Tag
+          if (post.challenge != null)
+            Positioned(
+              top: 100,
+              left: 20,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Theme.of(context).primaryColor),
+                ),
+                child: Row(
                   children: [
-                    Icon(Icons.pending, color: Colors.white54, size: 40),
+                    Icon(
+                      Icons.flag,
+                      color: Theme.of(context).primaryColor,
+                      size: 20,
+                    ),
+                    8.width(),
                     Text(
-                      'Not posted yet',
-                      style: TextStyle(color: Colors.white54),
+                      'CHALLENGE: ${post.challenge}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
 
-      // Dark Overlay
-      Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.transparent, Colors.black54],
-          ),
-        ),
-      ),
-
-      // Challenge Tag
-      if (post['challenge'] != null)
-        Positioned(
-          top: 100,
-          left: 20,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.black54,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Theme.of(context).primaryColor),
-            ),
-            child: Row(
+          // User Info & Caption
+          Positioned(
+            bottom: 120,
+            left: 20,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.flag,
-                  color: Theme.of(context).primaryColor,
-                  size: 20,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'CHALLENGE: ${post['challenge']}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                if (user != null) ...[
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 16,
+                        backgroundImage: NetworkImage(
+                          user.profilePictureUrl ?? '',
+                        ),
+                      ),
+                      8.width(),
+                      Text(
+                        '@${user.userName}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
+                  Text(
+                    '${post.timestamp.timeAgo()} ago',
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                ] else
+                  const Text(
+                    'Loading...',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+
+                8.height(),
+
+                if (post.caption != null)
+                  Text(
+                    post.caption!,
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+
+                if (post.hashtags.isNotEmpty)
+                  Text(
+                    post.hashtags.map((e) => '#$e').join(' '),
+                    style: TextStyle(color: Theme.of(context).primaryColor),
+                  ),
               ],
             ),
           ),
-        ),
 
-      // User Info & Caption
-      Positioned(
-        bottom: 120,
-        left: 20,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '@${post['username']}',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+          // Right Actions
+          Positioned(
+            right: 20,
+            bottom: 120,
+            child: Column(
+              children: [
+                _buildActionIcon(Icons.share, 'Share'),
+                16.height(),
+                _buildActionIcon(Icons.more_horiz, ''),
+              ],
             ),
-            Text(
-              '${post['timeAgo'] ?? ""}',
-              style: const TextStyle(color: Colors.white70),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              post['caption'] ?? '',
-              style: const TextStyle(color: Colors.white, fontSize: 16),
-            ),
-            if (post['hashtags'] != null)
-              Text(
-                post['hashtags'],
-                style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
-          ],
-        ),
-      ),
-
-      // Right Actions
-      Positioned(
-        right: 20,
-        bottom: 120,
-        child: Column(
-          children: [
-            _buildActionIcon(Icons.share, 'Share'),
-            const SizedBox(height: 16),
-            _buildActionIcon(Icons.more_horiz, ''),
-          ],
-        ),
-      ),
-
-      // Bottom Voting Buttons
-      Positioned(
-        bottom: -20,
-        left: 0,
-        right: 0,
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 40),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildVoteButton(
-                context,
-                Icons.thumb_up,
-                'Solid',
-                Colors.grey,
-                onTap: () {
-                  if (pageController.hasClients) {
-                    pageController.nextPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeIn,
-                    );
-                  }
-                },
-              ),
-              _buildVoteButton(
-                context,
-                Icons.whatshot,
-                'FIRE',
-                Theme.of(context).primaryColor,
-                isFire: true,
-                padding: 20,
-                onTap: () {
-                  // Play fire animation or glow
-
-                  // Call provider.voteOnPost(...)
-                  if (pageController.hasClients) {
-                    pageController.nextPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeIn,
-                    );
-                  }
-                },
-              ),
-              _buildVoteButton(
-                context,
-                Icons.close,
-                'Skip',
-                Colors.grey,
-                onTap: () {
-                  if (pageController.hasClients) {
-                    pageController.nextPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeIn,
-                    );
-                  }
-                },
-              ),
-            ],
           ),
-        ),
-      ),
-    ],
+
+          // Bottom Voting Buttons
+          Positioned(
+            bottom: -20,
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 40),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildVoteButton(
+                    context,
+                    Icons.thumb_up,
+                    'Solid',
+                    Colors.grey,
+                    postId: post.id,
+                    postOwnerUid: post.userId,
+                    currentUid: currentUid,
+                    pageController: pageController,
+                  ),
+                  _buildVoteButton(
+                    context,
+                    Icons.whatshot,
+                    'FIRE',
+                    Theme.of(context).primaryColor,
+                    isFire: true,
+                    postId: post.id,
+                    postOwnerUid: post.userId,
+                    currentUid: currentUid,
+                    pageController: pageController,
+                  ),
+                  _buildVoteButton(
+                    context,
+                    Icons.close,
+                    'Skip',
+                    Colors.grey,
+                    postId: post.id,
+                    postOwnerUid: post.userId,
+                    currentUid: currentUid,
+                    pageController: pageController,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    },
   );
 }
 
@@ -208,41 +236,86 @@ Widget _buildVoteButton(
   String label,
   Color color, {
   bool isFire = false,
-  double? padding,
-  void Function()? onTap,
+  double padding = 20,
+  required String postId,
+  required String postOwnerUid,
+  required String currentUid,
+  required PageController pageController,
 }) {
-  return GestureDetector(
-    onTap: onTap,
-    child: Column(
-      children: [
-        Container(
-          padding: EdgeInsets.all(padding ?? 10),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: isFire
-                ? Theme.of(context).primaryColor.withOpacity(0.9)
-                : Colors.black54,
-            boxShadow: isFire
-                ? [
-                    BoxShadow(
-                      color: Theme.of(context).primaryColor,
-                      blurRadius: 20,
-                    ),
-                  ]
-                : [],
-          ),
-          child: Icon(
-            icon,
-            color: Colors.white,
-            size: padding != null ? 30 : 20,
+  final postVm = context.read<PostViewModel>();
+
+  return FutureBuilder<bool>(
+    future: isFire
+        ? postVm.hasUserFiredPost(postId, currentUid)
+        : postVm.hasUserLikedPost(postId, currentUid), // Optional for Solid
+    builder: (context, snapshot) {
+      final hasVoted = snapshot.data ?? false;
+      final isLoading = snapshot.connectionState == ConnectionState.waiting;
+
+      return GestureDetector(
+        onTap: hasVoted || isLoading || postOwnerUid == currentUid
+            ? null
+            : () async {
+                if (isFire) {
+                  await postVm.firePost(postId);
+                } else {
+                  await postVm.likePost(postId); // Optional Solid
+                }
+
+                if (pageController.hasClients) {
+                  pageController.nextPage(
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.easeInOut,
+                  );
+                }
+              },
+        child: Opacity(
+          opacity: hasVoted || postOwnerUid == currentUid ? 0.5 : 1.0,
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.all(padding),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isFire
+                      ? Theme.of(
+                          context,
+                        ).primaryColor.withOpacity(hasVoted ? 0.5 : 0.9)
+                      : Colors.black54,
+                  boxShadow: isFire && !hasVoted
+                      ? [
+                          BoxShadow(
+                            color: Theme.of(
+                              context,
+                            ).primaryColor.withOpacity(0.6),
+                            blurRadius: 20,
+                          ),
+                        ]
+                      : [],
+                ),
+                child: isLoading
+                    ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : Icon(icon, color: Colors.white, size: 32),
+              ),
+              8.height(),
+              Text(
+                label,
+                style: TextStyle(
+                  color: hasVoted ? Colors.white38 : color,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: TextStyle(color: color, fontWeight: FontWeight.bold),
-        ),
-      ],
-    ),
+      );
+    },
   );
 }

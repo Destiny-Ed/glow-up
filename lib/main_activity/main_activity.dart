@@ -1,8 +1,15 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:glow_up/providers/post_vm.dart';
+import 'package:glow_up/providers/user_view_model.dart';
 import 'package:glow_up/screens/battle/battle_main_screen.dart';
+import 'package:glow_up/screens/camera/camera_screen.dart';
 import 'package:glow_up/screens/friends/friends.dart';
 import 'package:glow_up/screens/home_screen.dart';
 import 'package:glow_up/screens/profile/profile.dart';
+import 'package:glow_up/screens/profile/profile_setup.dart';
+import 'package:provider/provider.dart';
 
 class MainActivityScreen extends StatefulWidget {
   const MainActivityScreen({super.key});
@@ -23,6 +30,33 @@ class _MainActivityScreenState extends State<MainActivityScreen> {
 
   void _onItemTapped(int index) {
     setState(() => _selectedIndex = index);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    final provider = context.read<PostViewModel>();
+    final userVm = context.read<UserViewModel>();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      provider.listenToTodayFeed(); // Global feed
+      provider.listenToMyPosts(); //check if user has posted today
+      await userVm.loadUser();
+
+      if (!userVm.isProfileComplete) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfileSetupScreen()),
+        );
+      } else {
+        if (!provider.hasPostedToday) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const CameraScreen()),
+          );
+        }
+      }
+    });
   }
 
   @override

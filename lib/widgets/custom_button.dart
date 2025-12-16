@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:glow_up/core/extensions.dart';
 import 'package:glow_up/core/theme.dart';
- 
 
 class CustomButton extends StatelessWidget {
-  const CustomButton({super.key, required this.text, this.onTap, this.bgColor});
+  const CustomButton({
+    super.key,
+    required this.text,
+    this.onTap,
+    this.bgColor,
+    this.padding = 18,
+  });
 
   final String text;
   final VoidCallback? onTap;
   final Color? bgColor;
+  final double padding;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +22,7 @@ class CustomButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         alignment: Alignment.center,
-        padding: const EdgeInsets.all(18),
+        padding: EdgeInsets.all(padding),
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           color: bgColor ?? Theme.of(context).primaryColor,
@@ -39,7 +45,7 @@ class SocialButton extends StatelessWidget {
     required this.text,
     required this.icon,
     required this.onTap,
-    this.color
+    this.color,
   });
 
   final String text;
@@ -57,7 +63,7 @@ class SocialButton extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
-          color: color ??  Theme.of(context).cardColor,
+          color: color ?? Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(30),
           border: Border.all(color: Theme.of(context).secondaryHeaderColor),
         ),

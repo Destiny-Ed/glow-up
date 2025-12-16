@@ -139,9 +139,12 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.2),
+                    color: Theme.of(context).primaryColor.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(30),
-                    border: Border.all(color: Colors.green, width: 2),
+                    border: Border.all(
+                      color: Theme.of(context).primaryColor,
+                      width: 2,
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -181,8 +184,11 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                         ),
                       ),
                       Row(
-                        children: const [
-                          Icon(Icons.whatshot, color: Colors.green),
+                        children: [
+                          Icon(
+                            Icons.whatshot,
+                            color: Theme.of(context).primaryColor,
+                          ),
                           SizedBox(width: 6),
                           Text(
                             '4.2k',
@@ -212,7 +218,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: active ? Colors.green : Colors.white10,
+            color: active ? Theme.of(context).primaryColor : Colors.white10,
             borderRadius: BorderRadius.circular(30),
           ),
           child: Text(
@@ -234,7 +240,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
-          color: active ? Colors.green : Colors.white10,
+          color: active ? Theme.of(context).primaryColor : Colors.white10,
           borderRadius: BorderRadius.circular(30),
         ),
         child: Text(
@@ -259,7 +265,9 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
           children: [
             CircleAvatar(
               radius: isWinner ? 60 : 45,
-              backgroundColor: isWinner ? Colors.green : Colors.transparent,
+              backgroundColor: isWinner
+                  ? Theme.of(context).primaryColor
+                  : Colors.transparent,
               child: CircleAvatar(
                 radius: isWinner ? 58 : 43,
                 backgroundImage: NetworkImage(avatar),
@@ -278,7 +286,9 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: isWinner ? Colors.green : Colors.grey[800],
+                  color: isWinner
+                      ? Theme.of(context).primaryColor
+                      : Colors.grey[800],
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
@@ -303,7 +313,11 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.whatshot, color: Colors.green, size: 16),
+            Icon(
+              Icons.whatshot,
+              color: Theme.of(context).primaryColor,
+              size: 16,
+            ),
             Text(' $votes', style: const TextStyle(color: Colors.white)),
           ],
         ),
@@ -354,7 +368,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
           ),
           Row(
             children: [
-              const Icon(Icons.whatshot, color: Colors.green),
+              Icon(Icons.whatshot, color: Theme.of(context).primaryColor),
               const SizedBox(width: 6),
               Text(
                 votes,

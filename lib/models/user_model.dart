@@ -149,7 +149,7 @@ class UserModel {
       bio: bio ?? this.bio,
       location: location ?? this.location,
       phoneNumber: phoneNumber ?? this.phoneNumber,
-      gender: gender ?? this.gender,  
+      gender: gender ?? this.gender,
       dob: dob ?? this.dob,
       profileStatus: profileStatus ?? this.profileStatus,
       streakCount: streakCount ?? this.streakCount,
@@ -175,8 +175,8 @@ class UserModel {
         profilePictureUrl!.isNotEmpty &&
         userName != null &&
         userName!.isNotEmpty &&
-        bio != null &&
-        bio!.isNotEmpty &&
+        // bio != null &&
+        // bio!.isNotEmpty &&
         location != null &&
         location!.isNotEmpty &&
         phoneNumber != null &&

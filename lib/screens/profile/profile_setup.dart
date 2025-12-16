@@ -1,10 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:glow_up/core/extensions.dart';
+import 'package:glow_up/core/utils.dart';
 import 'package:glow_up/providers/user_view_model.dart';
 import 'package:glow_up/screens/contacts/contact_sync.dart';
 import 'package:glow_up/widgets/custom_button.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
@@ -15,25 +16,15 @@ class ProfileSetupScreen extends StatefulWidget {
 }
 
 class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
-  final ImagePicker _picker = ImagePicker();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _dobController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     // Load existing user data
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<UserViewModel>().loadUser();
-    });
-  }
-
-  Future<void> _pickAvatar() async {
-    final picked = await _picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 85,
-    );
-    if (picked != null) {
-      context.read<UserViewModel>().updateAvatar(File(picked.path));
-    }
+    _init();
   }
 
   @override
@@ -42,10 +33,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
         title: const Text(
           'Profile Setup',
           style: TextStyle(color: Colors.white),
@@ -64,7 +51,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       'Let\'s get you ready',
                       style: Theme.of(context).textTheme.headlineLarge
                           ?.copyWith(
-                            color: Colors.green,
+                            color: Theme.of(context).primaryColor,
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
                           ),
@@ -82,7 +69,15 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
                     // Avatar
                     GestureDetector(
-                      onTap: _pickAvatar,
+                      onTap: () {
+                        ImagePickerUtil().pickImageWithDialog(context).then((
+                          picked,
+                        ) {
+                          if (picked != null) {
+                            userVm.updateAvatar(File(picked.path));
+                          }
+                        });
+                      },
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
@@ -91,7 +86,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                             height: 120,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              border: Border.all(color: Colors.green, width: 4),
+                              border: Border.all(
+                                color: Theme.of(context).primaryColor,
+                                width: 4,
+                              ),
                               image: userVm.avatarImage != null
                                   ? DecorationImage(
                                       image: FileImage(userVm.avatarImage!),
@@ -116,12 +114,12 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                                   )
                                 : null,
                           ),
-                          const Positioned(
+                          Positioned(
                             bottom: 0,
                             right: 0,
                             child: CircleAvatar(
                               radius: 20,
-                              backgroundColor: Colors.green,
+                              backgroundColor: Theme.of(context).primaryColor,
                               child: const Icon(
                                 Icons.edit,
                                 color: Colors.black,
@@ -137,17 +135,68 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     // Username
                     _buildLabel('Username'),
                     TextFormField(
-                      initialValue: userVm.username,
+                      controller: _usernameController,
                       style: const TextStyle(color: Colors.white),
-                      onChanged: userVm.updateUsername,
-                      decoration: _inputDecoration(hintText: '@username'),
+                      onChanged: (value) {
+                        userVm.updateUsername(value);
+                        userVm.checkUsername(value);
+                      },
+                      decoration: InputDecoration(
+                        hintText: "@username",
+                        hintStyle: const TextStyle(color: Colors.white54),
+                        filled: true,
+                        fillColor: Colors.white10,
+                        suffixIcon: userVm.isCheckingUsername
+                            ? SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              )
+                            : userVm.isUsernameAvailable
+                            ? Icon(
+                                Icons.check_circle,
+                                color: Theme.of(context).primaryColor,
+                              )
+                            : const Icon(Icons.error, color: Colors.red),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                            width: 2,
+                          ),
+                        ),
+                      ),
                     ),
+                    // Error text
+                    if (userVm.usernameError != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8, left: 4),
+                        child: Text(
+                          userVm.usernameError!,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
                     20.height(),
 
                     // Phone
                     _buildLabel('Phone'),
+
                     TextFormField(
-                      initialValue: userVm.phoneNumber,
+                      controller: _phoneController,
                       keyboardType: TextInputType.phone,
                       style: const TextStyle(color: Colors.white),
                       onChanged: userVm.updatePhone,
@@ -179,7 +228,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                                 ),
                               )
                               .toList(),
-                      onChanged: (value) => userVm.updateGender,
+                      onChanged: (value) {
+                        if (value == null) return;
+                        userVm.updateGender(value);
+                      },
                       decoration: _inputDecoration(),
                       dropdownColor: Colors.grey[900],
                     ),
@@ -208,7 +260,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                                 ),
                               )
                               .toList(),
-                      onChanged: (value) => userVm.updateCountry,
+                      onChanged: (value) {
+                        if (value == null) return;
+                        userVm.updateCountry(value);
+                      },
                       decoration: _inputDecoration(),
                       dropdownColor: Colors.grey[900],
                     ),
@@ -217,6 +272,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     // Date of Birth
                     _buildLabel('Date of Birth'),
                     TextFormField(
+                      style: Theme.of(context).textTheme.titleMedium,
+                      controller: _dobController,
                       readOnly: true,
                       onTap: () async {
                         final date = await showDatePicker(
@@ -240,7 +297,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                         context,
                       ).textTheme.bodyMedium?.copyWith(color: Colors.white54),
                     ),
-                    40.height(),
+                    20.height(),
 
                     // Continue Button
                     SizedBox(
@@ -258,6 +315,12 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                                       builder: (_) => const ContactSyncScreen(),
                                     ),
                                   );
+                                } else {
+                                  Fluttertoast.showToast(
+                                    msg:
+                                        userVm.errorMessage ??
+                                        'Failed to save profile. Please try again.',
+                                  );
                                 }
                               },
                       ),
@@ -274,7 +337,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   }
 
   Widget _buildLabel(String text) {
-    return Align(
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
       alignment: Alignment.centerLeft,
       child: Text(
         text,
@@ -301,8 +365,24 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: Colors.green, width: 2),
+        borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
       ),
     );
+  }
+
+  void _init() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final userVm = context.read<UserViewModel>();
+      await userVm.loadUser();
+
+      if (mounted) {
+        _usernameController.text = userVm.username;
+        _phoneController.text = userVm.phoneNumber;
+        if (userVm.birthDate != null) {
+          _dobController.text =
+              '${userVm.birthDate!.month.toString().padLeft(2, '0')}/${userVm.birthDate!.day.toString().padLeft(2, '0')}/${userVm.birthDate!.year}';
+        }
+      }
+    });
   }
 }

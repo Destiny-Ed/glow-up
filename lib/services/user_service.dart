@@ -23,6 +23,24 @@ class UserService {
     await users.doc(currentUid).update(user.toJson());
   }
 
+  Future<bool> isUsernameAvailable(String username) async {
+    if (username.isEmpty) return false;
+
+    final lower = username.substring(1).toLowerCase(); // Remove @ and lowercase
+
+    final doc = await _db.collection('usernames').doc(lower).get();
+    return !doc.exists;
+  }
+
+  // Reserve username on save
+  Future<void> reserveUsername(String username, String uid) async {
+    final lower = username.replaceFirst('@', '').toLowerCase();
+    await _db.collection('usernames').doc(lower).set({
+      'uid': uid,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
   // Send friend request
   Future<void> sendFriendRequest(String targetUid) async {
     final batch = _db.batch();

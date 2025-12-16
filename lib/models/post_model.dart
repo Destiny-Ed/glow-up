@@ -6,7 +6,8 @@ class PostModel {
   final List<String> hashtags;
   final DateTime timestamp;
   final String? challenge;
-  final int fireCount; // Only count, no array
+  final int fireCount;
+  final int likesCount;
   final bool hasPosted;
 
   PostModel({
@@ -18,6 +19,7 @@ class PostModel {
     required this.timestamp,
     this.challenge,
     this.fireCount = 0,
+    this.likesCount = 0,
     this.hasPosted = true,
   });
 
@@ -31,6 +33,7 @@ class PostModel {
       timestamp: DateTime.parse(json['timestamp']),
       challenge: json['challenge'],
       fireCount: json['fireCount'] ?? 0,
+      likesCount: json['likesCount'] ?? 0,
       hasPosted: json['hasPosted'] ?? true,
     );
   }
@@ -45,6 +48,7 @@ class PostModel {
       'timestamp': timestamp.toIso8601String(),
       'challenge': challenge,
       'fireCount': fireCount,
+      'likesCount': likesCount,
       'hasPosted': hasPosted,
     };
   }

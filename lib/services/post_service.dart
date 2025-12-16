@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:glow_up/models/post_model.dart';
 import 'package:glow_up/services/user_service.dart';
@@ -29,7 +31,20 @@ class PostService {
 
   // Fire vote (separate collection)
   Future<void> firePost(String postId) async {
-    final likeRef = feed.doc(postId).collection('fires').doc(currentUid);
+    final fireRef = feed.doc(postId).collection('fires').doc(currentUid);
+    final postRef = feed.doc(postId);
+
+    final doc = await fireRef.get();
+    if (doc.exists) return; // Already fired
+
+    final batch = _db.batch();
+    batch.set(fireRef, {'timestamp': FieldValue.serverTimestamp()});
+    batch.update(postRef, {'fireCount': FieldValue.increment(1)});
+    await batch.commit();
+  }
+
+  Future<void> likePost(String postId) async {
+    final likeRef = feed.doc(postId).collection('likes').doc(currentUid);
     final postRef = feed.doc(postId);
 
     final doc = await likeRef.get();
@@ -37,7 +52,7 @@ class PostService {
 
     final batch = _db.batch();
     batch.set(likeRef, {'timestamp': FieldValue.serverTimestamp()});
-    batch.update(postRef, {'fireCount': FieldValue.increment(1)});
+    batch.update(postRef, {'likesCount': FieldValue.increment(1)});
     await batch.commit();
   }
 
@@ -47,21 +62,25 @@ class PostService {
     int limit = 20,
   }) {
     final today = DateTime.now();
-    final startOfDay = Timestamp.fromDate(
-      DateTime(today.year, today.month, today.day),
-    );
+    final startOfDay = DateTime(today.year, today.month, today.day);
 
     Query query = feed
-        .where('timestamp', isGreaterThanOrEqualTo: startOfDay)
+        .where(
+          'timestamp',
+          isGreaterThanOrEqualTo: startOfDay.toIso8601String(),
+        )
         .orderBy('timestamp', descending: true)
         .limit(limit);
 
     if (startAfter != null) query = query.startAfterDocument(startAfter);
 
     return query.snapshots().map(
-      (snapshot) => snapshot.docs
-          .map((doc) => PostModel.fromJson(doc.data() as Map<String, dynamic>))
-          .toList(),
+      (snapshot) => snapshot.docs.map((doc) {
+        log(
+          "data: ${PostModel.fromJson(doc.data() as Map<String, dynamic>).toJson()}",
+        );
+        return PostModel.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList(),
     );
   }
 
