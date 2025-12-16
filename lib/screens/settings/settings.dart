@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:glow_up/core/extensions.dart';
+import 'package:glow_up/providers/auth.dart';
 import 'package:glow_up/providers/settings.dart';
 import 'package:glow_up/providers/user_view_model.dart';
+import 'package:glow_up/screens/authentication/social_auth.dart';
 import 'package:glow_up/screens/profile/profile_setup.dart';
 import 'package:provider/provider.dart';
 
@@ -206,12 +208,52 @@ class SettingsScreen extends StatelessWidget {
                 hasArrow: true,
               ),
 
-              40.height(),
+              10.height(),
 
               Center(
                 child: TextButton(
                   onPressed: () {
-                    // Log out logic from AuthViewModel
+                    showDialog(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        backgroundColor: Theme.of(context).cardColor,
+                        title: Text(
+                          'Log Out?',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        content: Text(
+                          'Are you sure you want to log out?',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(ctx),
+                            child: Text(
+                              'Cancel',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              await context.read<AuthViewModel>().signOut();
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const SocialAuthScreen(),
+                                ),
+                                (route) => false,
+                              );
+                            },
+                            child: Text(
+                              'Log Out',
+                              style: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
                   },
                   child: const Text(
                     'Log Out',
@@ -220,7 +262,7 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ),
 
-              30.height(),
+              10.height(),
 
               const Center(
                 child: Text(
@@ -234,6 +276,8 @@ class SettingsScreen extends StatelessWidget {
                   style: TextStyle(color: Colors.white54),
                 ),
               ),
+
+              20.height(),
             ],
           );
         },
