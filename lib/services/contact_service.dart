@@ -155,12 +155,19 @@ class AppContactService {
       final Set<String> normalizedPhones = {};
       for (var contact in contactsWithPhones) {
         for (var phone in contact.phones) {
-          final normalized = _normalizePhone(phone.number);
-          if (normalized != null) {
-            normalizedPhones.add(normalized);
-          }
+          developer.log(
+            'Raw phone: ${phone.number}, Normalized: ${phone.normalizedNumber}',
+          );
+          // final normalized = _normalizePhone(phone.number);
+          // if (normalized != null) {
+          normalizedPhones.add(phone.number);
+          // }
         }
       }
+
+      developer.log(
+        'Normalized ${normalizedPhones.length} phone numbers for querying',
+      );
 
       if (normalizedPhones.isEmpty) {
         return ContactSyncResult(
@@ -183,7 +190,7 @@ class AppContactService {
         );
       }
 
-      List<Map<String, dynamic>> usersOnApp = [];
+      final List<Map<String, dynamic>> usersOnApp = [];
 
       for (var chunk in chunks) {
         final snapshot = await _db

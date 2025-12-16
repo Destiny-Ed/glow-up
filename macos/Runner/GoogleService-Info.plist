@@ -3,23 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>924791508157-am8p5k1d0pfego3qu3vu1vid32gudoci.apps.googleusercontent.com</string>
+	<string>93874100060-s8f65kgcfnu13sv65uupel5bt4kb373m.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.924791508157-am8p5k1d0pfego3qu3vu1vid32gudoci</string>
-	<key>ANDROID_CLIENT_ID</key>
-	<string>924791508157-chbecjsnbe6gqrf9ue4d32fg24nmarp8.apps.googleusercontent.com</string>
+	<string>com.googleusercontent.apps.93874100060-s8f65kgcfnu13sv65uupel5bt4kb373m</string>
 	<key>API_KEY</key>
-	<string>AIzaSyC9xEAjyHgMDNlrga1ic7JBGBv06bDgb9I</string>
+	<string>AIzaSyDkOmwrjnZ_P5zAaAWxUwvseHpVGgx4OrA</string>
 	<key>GCM_SENDER_ID</key>
-	<string>924791508157</string>
+	<string>93874100060</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.example.glowUp</string>
 	<key>PROJECT_ID</key>
-	<string>word-f43ac</string>
+	<string>glowup-c53d2</string>
 	<key>STORAGE_BUCKET</key>
-	<string>word-f43ac.appspot.com</string>
+	<string>glowup-c53d2.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,8 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:924791508157:ios:e475c5bdb86b302c577bd4</string>
-	<key>DATABASE_URL</key>
-	<string>https://word-f43ac-default-rtdb.firebaseio.com</string>
+	<string>1:93874100060:ios:a436831101ff8ba0e9d399</string>
 </dict>
 </plist>

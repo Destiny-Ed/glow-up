@@ -1,42 +1,34 @@
 {
   "project_info": {
-    "project_number": "924791508157",
-    "firebase_url": "https://word-f43ac-default-rtdb.firebaseio.com",
-    "project_id": "word-f43ac",
-    "storage_bucket": "word-f43ac.appspot.com"
+    "project_number": "93874100060",
+    "project_id": "glowup-c53d2",
+    "storage_bucket": "glowup-c53d2.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:924791508157:android:278b60b338667907577bd4",
+        "mobilesdk_app_id": "1:93874100060:android:a6cd403370900a39e9d399",
         "android_client_info": {
           "package_name": "com.example.glow_up"
         }
       },
       "oauth_client": [
         {
-          "client_id": "924791508157-2hg1n5vp3soeb40khn4ph98rijg8q9o2.apps.googleusercontent.com",
+          "client_id": "93874100060-fnfti5qu5gtl3hnsroup01tvgbtnjhnf.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDZppdx6xLW-IlL-0KqrztT3cye9EaOG90"
+          "current_key": "AIzaSyCqg1F8Q3mEfMB-7LZdhweQhLIvgOd-srQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "924791508157-2hg1n5vp3soeb40khn4ph98rijg8q9o2.apps.googleusercontent.com",
+              "client_id": "93874100060-fnfti5qu5gtl3hnsroup01tvgbtnjhnf.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "924791508157-am8p5k1d0pfego3qu3vu1vid32gudoci.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.glowUp"
-              }
             }
           ]
         }

@@ -41,58 +41,50 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAmapbKDB01zpnrSMyqoO3nO_Gv98y4bAw',
-    appId: '1:924791508157:web:b5b3cd263dc43707577bd4',
-    messagingSenderId: '924791508157',
-    projectId: 'word-f43ac',
-    authDomain: 'word-f43ac.firebaseapp.com',
-    databaseURL: 'https://word-f43ac-default-rtdb.firebaseio.com',
-    storageBucket: 'word-f43ac.appspot.com',
-    measurementId: 'G-3HBGL37XMB',
+    apiKey: 'AIzaSyBeRM82jWC_PUIstNbPP26Dj7ShwKvPUSk',
+    appId: '1:93874100060:web:6fc79b0c12d263f9e9d399',
+    messagingSenderId: '93874100060',
+    projectId: 'glowup-c53d2',
+    authDomain: 'glowup-c53d2.firebaseapp.com',
+    storageBucket: 'glowup-c53d2.firebasestorage.app',
+    measurementId: 'G-C1SL2KTFM0',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDZppdx6xLW-IlL-0KqrztT3cye9EaOG90',
-    appId: '1:924791508157:android:278b60b338667907577bd4',
-    messagingSenderId: '924791508157',
-    projectId: 'word-f43ac',
-    databaseURL: 'https://word-f43ac-default-rtdb.firebaseio.com',
-    storageBucket: 'word-f43ac.appspot.com',
+    apiKey: 'AIzaSyCqg1F8Q3mEfMB-7LZdhweQhLIvgOd-srQ',
+    appId: '1:93874100060:android:a6cd403370900a39e9d399',
+    messagingSenderId: '93874100060',
+    projectId: 'glowup-c53d2',
+    storageBucket: 'glowup-c53d2.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyC9xEAjyHgMDNlrga1ic7JBGBv06bDgb9I',
-    appId: '1:924791508157:ios:e475c5bdb86b302c577bd4',
-    messagingSenderId: '924791508157',
-    projectId: 'word-f43ac',
-    databaseURL: 'https://word-f43ac-default-rtdb.firebaseio.com',
-    storageBucket: 'word-f43ac.appspot.com',
-    androidClientId: '924791508157-chbecjsnbe6gqrf9ue4d32fg24nmarp8.apps.googleusercontent.com',
-    iosClientId: '924791508157-am8p5k1d0pfego3qu3vu1vid32gudoci.apps.googleusercontent.com',
+    apiKey: 'AIzaSyDkOmwrjnZ_P5zAaAWxUwvseHpVGgx4OrA',
+    appId: '1:93874100060:ios:a436831101ff8ba0e9d399',
+    messagingSenderId: '93874100060',
+    projectId: 'glowup-c53d2',
+    storageBucket: 'glowup-c53d2.firebasestorage.app',
+    iosClientId: '93874100060-s8f65kgcfnu13sv65uupel5bt4kb373m.apps.googleusercontent.com',
     iosBundleId: 'com.example.glowUp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyC9xEAjyHgMDNlrga1ic7JBGBv06bDgb9I',
-    appId: '1:924791508157:ios:e475c5bdb86b302c577bd4',
-    messagingSenderId: '924791508157',
-    projectId: 'word-f43ac',
-    databaseURL: 'https://word-f43ac-default-rtdb.firebaseio.com',
-    storageBucket: 'word-f43ac.appspot.com',
-    androidClientId: '924791508157-chbecjsnbe6gqrf9ue4d32fg24nmarp8.apps.googleusercontent.com',
-    iosClientId: '924791508157-am8p5k1d0pfego3qu3vu1vid32gudoci.apps.googleusercontent.com',
+    apiKey: 'AIzaSyDkOmwrjnZ_P5zAaAWxUwvseHpVGgx4OrA',
+    appId: '1:93874100060:ios:a436831101ff8ba0e9d399',
+    messagingSenderId: '93874100060',
+    projectId: 'glowup-c53d2',
+    storageBucket: 'glowup-c53d2.firebasestorage.app',
+    iosClientId: '93874100060-s8f65kgcfnu13sv65uupel5bt4kb373m.apps.googleusercontent.com',
     iosBundleId: 'com.example.glowUp',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyAmapbKDB01zpnrSMyqoO3nO_Gv98y4bAw',
-    appId: '1:924791508157:web:c8f8d8e96fda92d3577bd4',
-    messagingSenderId: '924791508157',
-    projectId: 'word-f43ac',
-    authDomain: 'word-f43ac.firebaseapp.com',
-    databaseURL: 'https://word-f43ac-default-rtdb.firebaseio.com',
-    storageBucket: 'word-f43ac.appspot.com',
-    measurementId: 'G-0S45Q65041',
+    apiKey: 'AIzaSyBeRM82jWC_PUIstNbPP26Dj7ShwKvPUSk',
+    appId: '1:93874100060:web:1a13da0bf9575135e9d399',
+    messagingSenderId: '93874100060',
+    projectId: 'glowup-c53d2',
+    authDomain: 'glowup-c53d2.firebaseapp.com',
+    storageBucket: 'glowup-c53d2.firebasestorage.app',
+    measurementId: 'G-LJ7WNSN8PS',
   );
-
 }

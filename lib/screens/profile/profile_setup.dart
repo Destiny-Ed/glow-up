@@ -53,7 +53,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 10),
 
               // Avatar
               GestureDetector(
@@ -97,7 +97,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 10),
 
               // Username
               Align(
@@ -123,7 +123,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
 
               Align(
                 alignment: Alignment.centerLeft,
@@ -150,7 +149,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
 
               // Gender
               Align(
@@ -187,7 +185,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 ),
                 dropdownColor: Colors.grey[900],
               ),
-              const SizedBox(height: 10),
 
               // Country
               Align(
@@ -224,7 +221,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 ),
                 dropdownColor: Colors.grey[900],
               ),
-              const SizedBox(height: 10),
 
               // Date of Birth
               Align(
