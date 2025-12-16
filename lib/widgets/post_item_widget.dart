@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:glow_up/core/enum.dart';
 import 'package:glow_up/core/extensions.dart';
 import 'package:glow_up/models/post_model.dart';
 import 'package:glow_up/models/user_model.dart';
@@ -155,9 +156,9 @@ Widget buildPostItem(
             bottom: 120,
             child: Column(
               children: [
-                _buildActionIcon(Icons.share, 'Share'),
+                _buildActionIcon(context, Icons.share, 'Share'),
                 16.height(),
-                _buildActionIcon(Icons.more_horiz, ''),
+                _buildActionIcon(context, Icons.more_horiz, ''),
               ],
             ),
           ),
@@ -175,9 +176,10 @@ Widget buildPostItem(
                   _buildVoteButton(
                     context,
                     Icons.thumb_up,
-                    'Solid',
+                    VotingAction.solid,
                     Colors.grey,
                     postId: post.id,
+                    padding: 8,
                     postOwnerUid: post.userId,
                     currentUid: currentUid,
                     pageController: pageController,
@@ -185,9 +187,8 @@ Widget buildPostItem(
                   _buildVoteButton(
                     context,
                     Icons.whatshot,
-                    'FIRE',
+                    VotingAction.fire,
                     Theme.of(context).primaryColor,
-                    isFire: true,
                     postId: post.id,
                     postOwnerUid: post.userId,
                     currentUid: currentUid,
@@ -196,9 +197,10 @@ Widget buildPostItem(
                   _buildVoteButton(
                     context,
                     Icons.close,
-                    'Skip',
+                    VotingAction.skip,
                     Colors.grey,
                     postId: post.id,
+                    padding: 8,
                     postOwnerUid: post.userId,
                     currentUid: currentUid,
                     pageController: pageController,
@@ -213,7 +215,7 @@ Widget buildPostItem(
   );
 }
 
-Widget _buildActionIcon(IconData icon, String label) {
+Widget _buildActionIcon(BuildContext context, IconData icon, String label) {
   return Column(
     children: [
       Container(
@@ -225,7 +227,7 @@ Widget _buildActionIcon(IconData icon, String label) {
         child: Icon(icon, color: Colors.white),
       ),
       if (label.isNotEmpty)
-        Text(label, style: const TextStyle(color: Colors.white)),
+        Text(label, style: Theme.of(context).textTheme.titleMedium),
     ],
   );
 }
@@ -233,9 +235,8 @@ Widget _buildActionIcon(IconData icon, String label) {
 Widget _buildVoteButton(
   BuildContext context,
   IconData icon,
-  String label,
+  VotingAction actionLabel,
   Color color, {
-  bool isFire = false,
   double padding = 20,
   required String postId,
   required String postOwnerUid,
@@ -245,7 +246,7 @@ Widget _buildVoteButton(
   final postVm = context.read<PostViewModel>();
 
   return FutureBuilder<bool>(
-    future: isFire
+    future: actionLabel == VotingAction.fire
         ? postVm.hasUserFiredPost(postId, currentUid)
         : postVm.hasUserLikedPost(postId, currentUid), // Optional for Solid
     builder: (context, snapshot) {
@@ -253,36 +254,37 @@ Widget _buildVoteButton(
       final isLoading = snapshot.connectionState == ConnectionState.waiting;
 
       return GestureDetector(
-        onTap: hasVoted || isLoading || postOwnerUid == currentUid
+        onTap: hasVoted || isLoading
             ? null
             : () async {
-                if (isFire) {
+                if (actionLabel == VotingAction.fire) {
                   await postVm.firePost(postId);
-                } else {
+                } else if (actionLabel == VotingAction.solid) {
                   await postVm.likePost(postId); // Optional Solid
-                }
-
-                if (pageController.hasClients) {
-                  pageController.nextPage(
-                    duration: const Duration(milliseconds: 400),
-                    curve: Curves.easeInOut,
-                  );
+                } else {
+                  if (pageController.hasClients) {
+                    pageController.nextPage(
+                      duration: const Duration(milliseconds: 400),
+                      curve: Curves.easeInOut,
+                    );
+                  }
                 }
               },
         child: Opacity(
-          opacity: hasVoted || postOwnerUid == currentUid ? 0.5 : 1.0,
+          // opacity: hasVoted || postOwnerUid == currentUid ? 0.5 : 1.0,
+          opacity: hasVoted ? 0.5 : 1.0,
           child: Column(
             children: [
               Container(
                 padding: EdgeInsets.all(padding),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isFire
+                  color: actionLabel == VotingAction.fire
                       ? Theme.of(
                           context,
                         ).primaryColor.withOpacity(hasVoted ? 0.5 : 0.9)
                       : Colors.black54,
-                  boxShadow: isFire && !hasVoted
+                  boxShadow: actionLabel == VotingAction.fire && !hasVoted
                       ? [
                           BoxShadow(
                             color: Theme.of(
@@ -302,15 +304,16 @@ Widget _buildVoteButton(
                           strokeWidth: 2,
                         ),
                       )
-                    : Icon(icon, color: Colors.white, size: 32),
+                    : Icon(icon, color: Colors.white, size: 24),
               ),
               8.height(),
               Text(
-                label,
-                style: TextStyle(
-                  color: hasVoted ? Colors.white38 : color,
-                  fontWeight: FontWeight.bold,
-                ),
+                actionLabel == VotingAction.fire
+                    ? 'FIRE'
+                    : actionLabel.name.capitalize,
+                style: hasVoted
+                    ? TextStyle(color: color, fontWeight: FontWeight.bold)
+                    : Theme.of(context).textTheme.titleMedium,
               ),
             ],
           ),
