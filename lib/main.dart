@@ -29,7 +29,7 @@ class GlowUpApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthViewModel()),
-        ChangeNotifierProvider(create: (_) => SettingsProvider()),
+        ChangeNotifierProvider(create: (_) => SettingsViewModel()),
 
         // User & Profile
         ChangeNotifierProvider(create: (_) => UserViewModel()),
@@ -46,7 +46,7 @@ class GlowUpApp extends StatelessWidget {
         // Feedback
         ChangeNotifierProvider(create: (_) => NotificationViewModel()),
       ],
-      child: Consumer<SettingsProvider>(
+      child: Consumer<SettingsViewModel>(
         builder: (context, settingVm, _) {
           return MaterialApp(
             title: appName,

@@ -5,6 +5,7 @@ import 'package:glow_up/providers/battle_viewmodel.dart';
 import 'package:glow_up/providers/notification_vm.dart';
 import 'package:glow_up/providers/post_vm.dart';
 import 'package:glow_up/providers/profile_vm.dart';
+import 'package:glow_up/providers/settings.dart';
 import 'package:glow_up/providers/user_view_model.dart';
 import 'package:glow_up/screens/authentication/social_auth.dart';
 import 'package:provider/provider.dart';
@@ -104,6 +105,10 @@ class _SplashScreenState extends State<SplashScreen> {
       ..initialize(uid);
 
     Provider.of<PostViewModel>(context, listen: false)
+      ..uid = uid
+      ..initialize(uid);
+
+    Provider.of<SettingsViewModel>(context, listen: false)
       ..uid = uid
       ..initialize(uid);
   }
