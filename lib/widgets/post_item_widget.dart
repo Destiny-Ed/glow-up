@@ -258,7 +258,7 @@ Widget _buildVoteButton(
             ? null
             : () async {
                 if (actionLabel == VotingAction.fire) {
-                  await postVm.firePost(postId);
+                  await postVm.firePost(postId, postOwnerUid);
                 } else if (actionLabel == VotingAction.solid) {
                   await postVm.likePost(postId); // Optional Solid
                 } else {

@@ -1,16 +1,20 @@
-// widgets/empty_feed_widget.dart
 
 import 'package:flutter/material.dart';
 import 'package:glow_up/core/extensions.dart';
 
-Widget emptyWidget(BuildContext context, String title, String subtitle) {
+Widget emptyWidget(
+  BuildContext context,
+  String title,
+  String subtitle, {
+  IconData icon = Icons.photo_camera_front,
+}) {
   return Center(
     child: Padding(
       padding: const EdgeInsets.all(40),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.photo_camera_front, size: 80, color: Colors.white24),
+          Icon(icon, size: 80, color: Colors.white24),
           30.height(),
           Text(
             title.capitalize,

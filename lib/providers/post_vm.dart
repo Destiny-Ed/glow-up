@@ -178,9 +178,9 @@ class PostViewModel extends BaseViewModel {
   }
 
   /// Fire a post (vote)
-  Future<void> firePost(String postId) async {
+  Future<void> firePost(String postId, String postOwnerId) async {
     try {
-      await _postService.firePost(postId);
+      await _postService.firePost(postId, postOwnerId);
     } catch (e) {
       setError('Vote failed');
     }

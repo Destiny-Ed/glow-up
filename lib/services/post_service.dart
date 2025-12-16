@@ -30,16 +30,44 @@ class PostService {
   }
 
   // Fire vote (separate collection)
-  Future<void> firePost(String postId) async {
-    final fireRef = feed.doc(postId).collection('fires').doc(currentUid);
-    final postRef = feed.doc(postId);
+  // In PostViewModel or PostService
 
-    final doc = await fireRef.get();
-    if (doc.exists) return; // Already fired
+  Future<void> firePost(String postId, String postOwnerId) async {
+    final String uid = currentUid; // Already set in service/viewmodel
 
-    final batch = _db.batch();
-    batch.set(fireRef, {'timestamp': FieldValue.serverTimestamp()});
+    final DocumentReference postRef = _db.collection('feed_posts').doc(postId);
+    final DocumentReference fireRef = postRef.collection('fires').doc(uid);
+    final DocumentReference userRef = _db
+        .collection('users')
+        .doc(postOwnerId); // Owner of the post
+
+    // Check if already fired
+    final fireDoc = await fireRef.get();
+    if (fireDoc.exists) {
+      // Already voted — silently ignore (or throw if you want feedback)
+      return;
+    }
+
+    // // Prevent self-voting
+    // if (uid == postOwnerId) {
+    //   return; // Or throw error: "Can't fire your own post"
+    // }
+
+    final WriteBatch batch = _db.batch();
+
+    // 1. Record the individual fire vote
+    batch.set(fireRef, {
+      'timestamp': FieldValue.serverTimestamp(),
+      'voterUid': uid,
+    });
+
+    // 2. Increment post fire count
     batch.update(postRef, {'fireCount': FieldValue.increment(1)});
+
+    // 3. Increment lifetime votes for the POST OWNER
+    batch.update(userRef, {'votes': FieldValue.increment(1)});
+
+    // Commit all at once — atomic & consistent
     await batch.commit();
   }
 
