@@ -1,5 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:glow_up/core/extensions.dart';
+import 'package:glow_up/models/notification_model.dart';
+import 'package:glow_up/providers/notification_vm.dart';
+import 'package:glow_up/widgets/empty_state.dart';
+import 'package:provider/provider.dart';
 
 class ActivityScreen extends StatefulWidget {
   const ActivityScreen({super.key});
@@ -9,215 +14,257 @@ class ActivityScreen extends StatefulWidget {
 }
 
 class _ActivityScreenState extends State<ActivityScreen> {
-  String _filter = 'All'; // All, Battles, Votes, Requests
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const Text(
-          'Activity',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        actions: const [
-          IconButton(icon: Icon(Icons.keyboard_arrow_down), onPressed: null),
-        ],
-      ),
-      body: Column(
-        children: [
-          // Filter Tabs
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Row(
-              children: [
-                _filterChip('All', true),
-                const SizedBox(width: 12),
-                _filterChip('Battles', false),
-                const SizedBox(width: 12),
-                _filterChip('Votes', false),
-                const SizedBox(width: 12),
-                _filterChip('Requests', false),
-              ],
+    return Consumer<NotificationViewModel>(
+      builder: (context, notifVm, child) {
+        if (notifVm.isLoading) {
+          return Center(
+            child: CircularProgressIndicator(
+              color: Theme.of(context).primaryColor,
             ),
-          ),
+          );
+        }
 
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              children: [
-                  Text(
-                  'New',
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold,
-                  ),
+        final notifications = notifVm.filteredNotifications;
+
+        return Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            title: const Text(
+              'Activity',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            actions: [
+              IconButton(
+                icon: Badge(
+                  label: Text('${notifVm.unreadCount}'),
+                  isLabelVisible: notifVm.unreadCount > 0,
+                  child: const Icon(Icons.keyboard_arrow_down),
                 ),
-                const SizedBox(height: 12),
-                _notificationItem(
-                  avatar: 'https://i.pravatar.cc/150?img=10',
-                  title: 'Sarah challenged you to a \'Vintage Denim\' battle.',
-                  time: '2m ago',
-                  actionButton: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).primaryColor,
+                onPressed: () {},
+              ),
+            ],
+          ),
+          body: Column(
+            children: [
+              // Filter Tabs
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
+                child: Row(
+                  children: [
+                    _filterChip(
+                      'All',
+                      notifVm.currentFilter == 'All',
+                      () => notifVm.setFilter('All'),
                     ),
-                    child: const Text('Accept'),
-                  ),
-                  hasBadge: true,
+                    12.width(),
+                    _filterChip(
+                      'Battles',
+                      notifVm.currentFilter == 'Battles',
+                      () => notifVm.setFilter('Battles'),
+                    ),
+                    12.width(),
+                    _filterChip(
+                      'Votes',
+                      notifVm.currentFilter == 'Votes',
+                      () => notifVm.setFilter('Votes'),
+                    ),
+                    12.width(),
+                    _filterChip(
+                      'Requests',
+                      notifVm.currentFilter == 'Requests',
+                      () => notifVm.setFilter('Requests'),
+                    ),
+                  ],
                 ),
-                _notificationItem(
-                  avatar: 'https://i.pravatar.cc/150?img=22',
-                  title: 'Mike sent you a friend request.',
-                  time: '15m ago',
-                  actionButton: Row(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {},
-                        child: const Text('Confirm'),
-                      ),
-                      const SizedBox(width: 8),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
-                ),
+              ),
 
-                const SizedBox(height: 30),
-                const Text('Today', style: TextStyle(color: Colors.white70)),
-                const SizedBox(height: 12),
-                _notificationItem(
-                  photo: 'https://i.pravatar.cc/150?img=22',
-                  title:
-                      'Your \'Summer Friday\' outfit is heating up! +12 votes',
-                  time: '2h ago',
-                  hasPhoto: true,
-                ),
-                _notificationItem(
-                  icon: Icons.access_time,
-                  title:
-                      'Daily Drop: Time to post your outfit for the \'Neon Nights\' theme.',
-                  time: '5h ago',
-                ),
-
-                const SizedBox(height: 30),
-                const Text(
-                  'Yesterday',
-                  style: TextStyle(color: Colors.white70),
-                ),
-                const SizedBox(height: 12),
-                _notificationItem(
-                  avatar: 'https://i.pravatar.cc/150?img=35',
-                  title: 'Jessica voted for you in the battle against Tom.',
-                  time: '1d ago',
-                ),
-                _notificationItem(
-                  icon: Icons.emoji_events,
-                  title:
-                      'Battle \'Streetwear Sunday\' has ended. See the winner!',
-                  time: '1d ago',
-                  hasArrow: true,
-                ),
-              ],
-            ),
+              Expanded(
+                child: notifications.isEmpty
+                    ? emptyWidget(
+                        context,
+                        "No notifications yet",
+                        "Notifications will appear when they are available",
+                        icon: Icons.notification_add,
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        itemCount: notifications.length,
+                        itemBuilder: (context, index) {
+                          final notif = notifications[index];
+                          return _notificationItem(
+                            context,
+                            notification: notif,
+                            onTap: () => notifVm.markAsRead(notif.id),
+                          );
+                        },
+                      ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _filterChip(String label, bool active) {
+  Widget _filterChip(String label, bool active, VoidCallback onTap) {
     return GestureDetector(
-      onTap: () => setState(() => _filter = label),
+      onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
-          color: active ? Theme.of(context).primaryColor : Colors.white10,
+          color: active
+              ? Theme.of(context).primaryColor
+              : Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(30),
         ),
         child: Text(
           label,
-          style: TextStyle(color: active ? Colors.black : Colors.white),
+          style: TextStyle(
+            color: active
+                ? Theme.of(context).scaffoldBackgroundColor
+                : Theme.of(context).textTheme.titleMedium!.color,
+          ),
         ),
       ),
     );
   }
 
-  Widget _notificationItem({
-    String? avatar,
-    String? photo,
-    IconData? icon,
-    required String title,
-    required String time,
-    Widget? actionButton,
-    bool hasBadge = false,
-    bool hasPhoto = false,
-    bool hasArrow = false,
+  Widget _notificationItem(
+    BuildContext context, {
+    required NotificationModel notification,
+    required VoidCallback onTap,
   }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white10,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (hasPhoto)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: CachedNetworkImage(
-                imageUrl: photo!,
-                width: 60,
-                height: 60,
-                fit: BoxFit.cover,
+    final bool hasAction =
+        notification.type == NotificationType.battleInvite ||
+        notification.type == NotificationType.friendRequest;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: notification.isRead
+              ? Theme.of(context).cardColor
+              : Theme.of(context).primaryColor.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(20),
+          border: notification.isRead
+              ? null
+              : Border.all(
+                  color: Theme.of(context).primaryColor.withOpacity(0.5),
+                ),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Avatar / Photo / Icon
+            if (notification.imageUrl != null &&
+                notification.type != NotificationType.dailyReminder)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: CachedNetworkImage(
+                  imageUrl: notification.imageUrl!,
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.cover,
+                ),
+              )
+            else if (notification.type == NotificationType.dailyReminder)
+              CircleAvatar(
+                radius: 24,
+                backgroundColor: Theme.of(context).cardColor.lighten(),
+                child: Icon(
+                  Icons.access_time,
+                  color: Theme.of(context).textTheme.titleMedium!.color,
+                ),
+              )
+            else
+              CircleAvatar(
+                radius: 24,
+                backgroundImage: CachedNetworkImageProvider(
+                  notification.imageUrl ?? 'https://i.pravatar.cc/150',
+                ),
               ),
-            )
-          else if (icon != null)
-            CircleAvatar(
-              radius: 24,
-              backgroundColor: Colors.white10,
-              child: Icon(icon, color: Colors.white),
-            )
-          else
-            CircleAvatar(
-              radius: 24,
-              backgroundImage: CachedNetworkImageProvider(avatar!),
+
+            16.width(),
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    notification.title,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  Text(
+                    notification.message,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  8.height(),
+                  Text(
+                    _formatTimeAgo(notification.timestamp),
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                  if (hasAction) ...[
+                    12.height(),
+                    Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            // Handle accept (battle or friend)
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).primaryColor,
+                          ),
+                          child: Text(
+                            notification.type == NotificationType.battleInvite
+                                ? 'Accept'
+                                : 'Confirm',
+                            style: TextStyle(
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                            ),
+                          ),
+                        ),
+                        12.width(),
+                        OutlinedButton(
+                          onPressed: () {
+                            // Handle decline
+                          },
+                          child: const Text('Decline'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
             ),
 
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: const TextStyle(color: Colors.white)),
-                Text(
-                  time,
-                  style: const TextStyle(color: Colors.white54, fontSize: 13),
+            if (!notification.isRead)
+              Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  shape: BoxShape.circle,
                 ),
-                if (actionButton != null) const SizedBox(height: 12),
-                if (actionButton != null) actionButton,
-              ],
-            ),
-          ),
-          if (hasArrow) const Icon(Icons.chevron_right, color: Colors.white54),
-          if (hasBadge)
-            Positioned(
-              right: 0,
-              top: 0,
-              child: CircleAvatar(
-                radius: 10,
-                backgroundColor: Theme.of(context).primaryColor,
-                child: const Text('2', style: TextStyle(fontSize: 10)),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  String _formatTimeAgo(DateTime date) {
+    final diff = DateTime.now().difference(date);
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    if (diff.inDays < 7) return '${diff.inDays}d ago';
+    return '${diff.inDays ~/ 7}w ago';
   }
 }
