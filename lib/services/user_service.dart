@@ -98,6 +98,29 @@ class UserService {
     return await Future.wait(futures);
   }
 
+  // In UserService
+
+  Future<List<UserModel>> getUsersByUids(List<String> uids) async {
+    if (uids.isEmpty) return [];
+
+    final snapshots = await Future.wait(uids.map((id) => users.doc(id).get()));
+    return snapshots
+        .where((s) => s.exists)
+        .map((s) => UserModel.fromJson(s.data() as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<void> declineFriendRequest(String requesterUid) async {
+    final batch = _db.batch();
+    batch.update(users.doc(currentUid), {
+      'pendingRequestUids': FieldValue.arrayRemove([requesterUid]),
+    });
+    batch.update(users.doc(requesterUid), {
+      'sentRequestUids': FieldValue.arrayRemove([currentUid]),
+    });
+    await batch.commit();
+  }
+
   // Search users
   Future<List<UserModel>> searchUsers(String query, {int limit = 20}) async {
     final lower = query.toLowerCase();

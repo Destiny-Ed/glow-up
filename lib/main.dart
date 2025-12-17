@@ -5,6 +5,7 @@ import 'package:glow_up/firebase_options.dart';
 import 'package:glow_up/providers/auth.dart';
 import 'package:glow_up/providers/battle_viewmodel.dart';
 import 'package:glow_up/providers/contact_viewmodel.dart';
+import 'package:glow_up/providers/friends_vm.dart';
 import 'package:glow_up/providers/leaderboard_viewmodel.dart';
 import 'package:glow_up/providers/notification_vm.dart';
 import 'package:glow_up/providers/post_vm.dart';
@@ -37,6 +38,7 @@ class GlowUpApp extends StatelessWidget {
 
         // Social & Discovery
         ChangeNotifierProvider(create: (_) => ContactViewModel()),
+        ChangeNotifierProvider(create: (_) => FriendsViewModel()),
 
         // Competition
         ChangeNotifierProvider(create: (_) => BattleViewModel()),

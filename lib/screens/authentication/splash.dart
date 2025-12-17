@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:glow_up/core/extensions.dart';
 import 'package:glow_up/main_activity/main_activity.dart';
 import 'package:glow_up/providers/auth.dart';
 import 'package:glow_up/providers/battle_viewmodel.dart';
+import 'package:glow_up/providers/friends_vm.dart';
 import 'package:glow_up/providers/notification_vm.dart';
 import 'package:glow_up/providers/post_vm.dart';
 import 'package:glow_up/providers/profile_vm.dart';
@@ -39,18 +41,12 @@ class _SplashScreenState extends State<SplashScreen> {
               //   'assets/lottie/bug-hunting.json',
               //   width: 200,
               // ), // Add your Lottie
-              const Text(
-                'GlowUp',
-                style: TextStyle(
-                  fontSize: 48,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Text(
+              Text('GlowUp', style: Theme.of(context).textTheme.headlineLarge),
+              20.height(),
+              Text(
                 'The daily outfit battel your friends\nare already playing.',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white70),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
               const Spacer(),
               Column(
@@ -91,24 +87,28 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _initAllUidViewModels(String uid) {
     // Initialize all UID-dependent ViewModels
-    Provider.of<UserViewModel>(context, listen: false)
+    context.read<UserViewModel>()
       ..uid = uid
       ..initialize(uid);
-    Provider.of<ProfileViewModel>(context, listen: false)
+    context.read<ProfileViewModel>()
       ..uid = uid
       ..initialize(uid);
-    Provider.of<BattleViewModel>(context, listen: false)
+    context.read<BattleViewModel>()
       ..uid = uid
       ..initialize(uid);
-    Provider.of<NotificationViewModel>(context, listen: false)
-      ..uid = uid
-      ..initialize(uid);
-
-    Provider.of<PostViewModel>(context, listen: false)
+    context.read<NotificationViewModel>()
       ..uid = uid
       ..initialize(uid);
 
-    Provider.of<SettingsViewModel>(context, listen: false)
+    context.read<PostViewModel>()
+      ..uid = uid
+      ..initialize(uid);
+
+    context.read<SettingsViewModel>()
+      ..uid = uid
+      ..initialize(uid);
+
+    context.read<FriendsViewModel>()
       ..uid = uid
       ..initialize(uid);
   }
