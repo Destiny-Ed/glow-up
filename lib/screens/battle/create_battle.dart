@@ -1,7 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:glow_up/core/extensions.dart';
 import 'package:glow_up/providers/battle_viewmodel.dart';
 import 'package:glow_up/providers/user_view_model.dart';
+import 'package:glow_up/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 
 class CreateBattleScreen extends StatefulWidget {
@@ -25,6 +28,8 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
     '90s Vibes',
     'Office Slay',
     'Festival Look',
+    'High School Vibe',
+    'Swag King',
   ];
 
   Duration get _duration {
@@ -62,276 +67,303 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
     final canSend = _selectedOpponents.isNotEmpty && theme.isNotEmpty;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'New Battle',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        title: const Text('New Battle'),
         actions: [
           TextButton(
-            onPressed: () {}, // Drafts
-            child: const Text(
-              'Drafts',
-              style: TextStyle(color: Colors.white70),
+            onPressed: () {},
+            child: Text(
+              'Draft',
+              style: Theme.of(context).textTheme.titleMedium,
             ),
           ),
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Choose Theme',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Choose Theme',
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
-            ),
-            16.height(),
+              16.height(),
+              // Trending Themes
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.whatshot,
+                            color: Theme.of(
+                              context,
+                            ).textTheme.headlineMedium!.color,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Trending',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                    12.width(),
+                    ..._trendingThemes.map((theme) {
+                      final selected = _customThemeController.text == theme;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: ChoiceChip(
+                          label: Text(theme),
+                          selected: selected,
+                          onSelected: (_) => setState(
+                            () => _customThemeController.text = theme,
+                          ),
+                          backgroundColor: Theme.of(context).cardColor,
+                          selectedColor: Theme.of(
+                            context,
+                          ).primaryColor.withOpacity(0.3),
+                          labelStyle: TextStyle(
+                            color: selected
+                                ? Theme.of(context).primaryColor
+                                : Theme.of(
+                                    context,
+                                  ).textTheme.headlineMedium!.color,
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ),
 
-            // Trending Themes
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
+              20.height(),
+
+              // Custom Theme Field
+              Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: TextFormField(
+                  controller: _customThemeController,
+                  style: Theme.of(context).textTheme.titleMedium,
+                  decoration: InputDecoration(
+                    hintText: 'Or enter custom theme...',
+                    hintStyle: Theme.of(context).textTheme.titleMedium,
+                    prefixIcon: Icon(
+                      Icons.edit,
+                      color: Theme.of(
+                        context,
+                      ).textTheme.titleMedium!.color!.darken(),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: Theme.of(context).primaryColor,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                  onChanged: (_) => setState(() {}),
+                ),
+              ),
+
+              32.height(),
+
+              // Select Opponents
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 10,
+                  Text(
+                    'Select Opponents',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  Text(
+                    '${_selectedOpponents.length}/5 Selected',
+                    style: TextStyle(
+                      color: Theme.of(
+                        context,
+                      ).textTheme.titleMedium!.color!.darken(),
                     ),
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Row(
-                      children: const [
-                        Icon(Icons.whatshot, color: Colors.black, size: 20),
-                        SizedBox(width: 8),
-                        Text(
-                          'Trending',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
+                  ),
+                ],
+              ),
+              16.height(),
+
+              // Selected Opponents Horizontal Scroll
+              SizedBox(
+                height: 50,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _selectedOpponents.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == _selectedOpponents.length) {
+                      return GestureDetector(
+                        onTap: () => _showFriendPicker(context, friends),
+                        child: Container(
+                          width: 80,
+                          margin: const EdgeInsets.only(right: 12),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Theme.of(context).cardColor,
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(40),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '+',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+
+                    final opponentUid = _selectedOpponents[index];
+                    return Stack(
+                      children: [
+                        Container(
+                          width: 80,
+                          margin: const EdgeInsets.only(right: 12),
+                          child: Column(
+                            children: [
+                              CircleAvatar(
+                                radius: 36,
+                                backgroundImage: CachedNetworkImageProvider(
+                                  'https://i.pravatar.cc/150?u=$opponentUid',
+                                ),
+                              ),
+                              6.height(),
+                              Text(
+                                'Friend',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Positioned(
+                          top: 0,
+                          right: 8,
+                          child: GestureDetector(
+                            onTap: () => setState(
+                              () => _selectedOpponents.remove(opponentUid),
+                            ),
+                            child: CircleAvatar(
+                              radius: 12,
+                              backgroundColor: Theme.of(context).cardColor,
+                              child: Icon(
+                                Icons.close,
+                                size: 16,
+                                color: Theme.of(
+                                  context,
+                                ).textTheme.titleMedium!.color!,
+                              ),
+                            ),
                           ),
                         ),
                       ],
-                    ),
-                  ),
-                  12.width(),
-                  ..._trendingThemes.map((theme) {
-                    final selected = _customThemeController.text == theme;
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 12),
-                      child: ChoiceChip(
-                        label: Text(theme),
-                        selected: selected,
-                        onSelected: (_) =>
-                            setState(() => _customThemeController.text = theme),
-                        backgroundColor: Colors.white10,
-                        selectedColor: Colors.green.withOpacity(0.3),
-                        labelStyle: TextStyle(
-                          color: selected ? Colors.green : Colors.white,
-                        ),
-                      ),
                     );
-                  }),
+                  },
+                ),
+              ),
+
+              32.height(),
+
+              // Duration
+              Text(
+                'Duration',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              16.height(),
+              Row(
+                children: [
+                  _durationChip('24h', _selectedDuration == '24h'),
+                  12.width(),
+                  _durationChip('48h', _selectedDuration == '48h'),
+                  12.width(),
+                  _durationChip(
+                    'Until all post',
+                    _selectedDuration == 'Until all post',
+                  ),
                 ],
               ),
-            ),
 
-            20.height(),
+              32.height(),
 
-            // Custom Theme Field
-            TextField(
-              controller: _customThemeController,
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                hintText: 'Or enter custom theme...',
-                hintStyle: const TextStyle(color: Colors.white54),
-                prefixIcon: const Icon(Icons.edit, color: Colors.white54),
-                filled: true,
-                fillColor: Colors.white10,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
-                ),
+              // Caption
+              Text(
+                'Add Caption (Optional)',
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
-              onChanged: (_) => setState(() {}),
-            ),
-
-            32.height(),
-
-            // Select Opponents
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Select Opponents',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+              12.height(),
+              Container(
+                padding: const EdgeInsets.only(bottom: 10),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: TextFormField(
+                  controller: _captionController,
+                  maxLength: 140,
+                  maxLines: 3,
+                  style: Theme.of(context).textTheme.titleMedium,
+                  decoration: InputDecoration(
+                    hintText: 'Trash talk or set specific rules...',
+                    hintStyle: Theme.of(context).textTheme.titleMedium,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: Theme.of(context).primaryColor,
+                        width: 2,
+                      ),
+                    ),
+                    counterStyle: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
-                Text(
-                  '${_selectedOpponents.length}/5 Selected',
-                  style: const TextStyle(color: Colors.white70),
-                ),
-              ],
-            ),
-            16.height(),
-
-            // Selected Opponents Horizontal Scroll
-            SizedBox(
-              height: 90,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: _selectedOpponents.length + 1,
-                itemBuilder: (context, index) {
-                  if (index == _selectedOpponents.length) {
-                    return GestureDetector(
-                      onTap: () => _showFriendPicker(context, friends),
-                      child: Container(
-                        width: 80,
-                        margin: const EdgeInsets.only(right: 12),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white30, width: 2),
-                          borderRadius: BorderRadius.circular(40),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            '+',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 36,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-
-                  final opponentUid = _selectedOpponents[index];
-                  return Stack(
-                    children: [
-                      Container(
-                        width: 80,
-                        margin: const EdgeInsets.only(right: 12),
-                        child: Column(
-                          children: [
-                            CircleAvatar(
-                              radius: 36,
-                              backgroundImage: NetworkImage(
-                                'https://i.pravatar.cc/150?u=$opponentUid',
-                              ),
-                            ),
-                            6.height(),
-                            Text(
-                              'Friend',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                        top: 0,
-                        right: 8,
-                        child: GestureDetector(
-                          onTap: () => setState(
-                            () => _selectedOpponents.remove(opponentUid),
-                          ),
-                          child: const CircleAvatar(
-                            radius: 12,
-                            backgroundColor: Colors.white,
-                            child: Icon(
-                              Icons.close,
-                              size: 16,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
               ),
-            ),
+              32.height(),
 
-            32.height(),
+              // Send Challenge Button
+              CustomButton(
+                text: battleVm.isLoading ? "loading..." : "send challenge",
+                bgColor: canSend
+                    ? Theme.of(context).primaryColor
+                    : Theme.of(context).cardColor,
 
-            // Duration
-            const Text(
-              'Duration',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            16.height(),
-            Row(
-              children: [
-                _durationChip('24h', _selectedDuration == '24h'),
-                12.width(),
-                _durationChip('48h', _selectedDuration == '48h'),
-                12.width(),
-                _durationChip(
-                  'Until all post',
-                  _selectedDuration == 'Until all post',
-                ),
-              ],
-            ),
-
-            32.height(),
-
-            // Caption
-            const Text(
-              'Add Caption (Optional)',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            12.height(),
-            TextField(
-              controller: _captionController,
-              maxLength: 140,
-              maxLines: 3,
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                hintText: 'Trash talk or set specific rules...',
-                hintStyle: const TextStyle(color: Colors.white54),
-                filled: true,
-                fillColor: Colors.white10,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
-                ),
-                counterStyle: const TextStyle(color: Colors.white54),
-              ),
-            ),
-
-            const Spacer(),
-
-            // Send Challenge Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: canSend && !battleVm.isLoading
+                onTap: canSend && !battleVm.isLoading
                     ? () async {
                         await battleVm.createBattle(
                           theme: theme,
@@ -342,43 +374,25 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
                           opponentUids: _selectedOpponents,
                         );
 
+                        if (battleVm.hasError) {
+                          Fluttertoast.showToast(
+                            msg:
+                                battleVm.errorMessage ??
+                                "failed to create challenge",
+                          );
+                          return;
+                        }
+
                         if (!mounted) return;
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Challenge sent! 🔥')),
-                        );
+                        Fluttertoast.showToast(msg: 'Challenge sent! 🔥');
 
                         Navigator.pop(context);
                       }
                     : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: canSend ? Colors.green : Colors.grey[800],
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  elevation: canSend ? 10 : 0,
-                ),
-                child: battleVm.isLoading
-                    ? const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                          color: Colors.black,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : const Text(
-                        'Send Challenge >',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -387,21 +401,17 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
   void _showFriendPicker(BuildContext context, List<String> friendUids) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.grey[900],
+      backgroundColor: Theme.of(context).cardColor,
       builder: (_) => Container(
         height: 400,
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            const Text(
+            Text(
               'Add Opponent',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
-            const Divider(color: Colors.white30),
+            Divider(color: Theme.of(context).textTheme.headlineMedium!.color),
             Expanded(
               child: ListView.builder(
                 itemCount: friendUids.length,
@@ -411,16 +421,19 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
 
                   return ListTile(
                     leading: CircleAvatar(
-                      backgroundImage: NetworkImage(
+                      backgroundImage: CachedNetworkImageProvider(
                         'https://i.pravatar.cc/150?u=$uid',
                       ),
                     ),
                     title: Text(
                       'Friend $uid',
-                      style: const TextStyle(color: Colors.white),
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                     trailing: isSelected
-                        ? const Icon(Icons.check, color: Colors.green)
+                        ? Icon(
+                            Icons.check,
+                            color: Theme.of(context).primaryColor,
+                          )
                         : null,
                     onTap: () {
                       setState(() {
@@ -448,7 +461,7 @@ class _CreateBattleScreenState extends State<CreateBattleScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
-          color: selected ? Colors.green : Colors.white10,
+          color: selected ? Theme.of(context).primaryColor : Colors.white10,
           borderRadius: BorderRadius.circular(30),
         ),
         child: Text(
